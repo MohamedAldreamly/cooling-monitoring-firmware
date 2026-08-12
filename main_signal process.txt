@@ -1,0 +1,191 @@
+#include <inttypes.h>
+
+#include "app_queues.h"
+#include "esp_err.h"
+#include "esp_log.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "signal_processing.h"
+#include "signal_registry.h"
+#include "signal_snapshot_manager.h"
+#include "simulation_engine.h"
+
+static const char *TAG = "MAIN";
+
+#define SNAPSHOT_MONITOR_STACK_SIZE   4096U
+#define SNAPSHOT_MONITOR_PRIORITY     4U
+
+static void log_snapshot(
+    const signal_snapshot_t *snapshot
+)
+{
+    ESP_LOGI(
+        TAG,
+        "SNAPSHOT seq=%lu signals=%u good=%lu uncertain=%lu fault=%lu stale=%lu unavailable=%lu",
+        (unsigned long)snapshot->snapshot_sequence,
+        (unsigned int)snapshot->signal_count,
+        (unsigned long)snapshot->good_count,
+        (unsigned long)snapshot->uncertain_count,
+        (unsigned long)snapshot->fault_count,
+        (unsigned long)snapshot->stale_count,
+        (unsigned long)snapshot->unavailable_count
+    );
+
+    for (size_t index = 0;
+         index < snapshot->signal_count;
+         index++) {
+
+        const signal_value_t *value =
+            &snapshot->signals[index];
+
+        const char *name =
+            signal_registry_name(
+                value->signal_id
+            );
+
+        const char *quality =
+            signal_quality_to_string(
+                value->quality
+            );
+
+        if (!value->has_value) {
+            ESP_LOGW(
+                TAG,
+                "  %s = null, quality=%s",
+                name,
+                quality
+            );
+
+            continue;
+        }
+
+        switch (value->data_type) {
+            case SIGNAL_DATA_TYPE_FLOAT32:
+                ESP_LOGI(
+                    TAG,
+                    "  %s = %.2f %s, quality=%s",
+                    name,
+                    (double)value->value.float32,
+                    signal_unit_to_string(
+                        value->unit
+                    ),
+                    quality
+                );
+                break;
+
+            case SIGNAL_DATA_TYPE_BOOL:
+                ESP_LOGI(
+                    TAG,
+                    "  %s = %s, quality=%s",
+                    name,
+                    value->value.boolean
+                        ? "true"
+                        : "false",
+                    quality
+                );
+                break;
+
+            case SIGNAL_DATA_TYPE_INT32:
+                ESP_LOGI(
+                    TAG,
+                    "  %s = %" PRId32 ", quality=%s",
+                    name,
+                    value->value.int32,
+                    quality
+                );
+                break;
+
+            case SIGNAL_DATA_TYPE_UINT32:
+                ESP_LOGI(
+                    TAG,
+                    "  %s = %" PRIu32 ", quality=%s",
+                    name,
+                    value->value.uint32,
+                    quality
+                );
+                break;
+
+            default:
+                break;
+        }
+    }
+}
+
+static void snapshot_monitor_task(void *argument)
+{
+    (void)argument;
+
+    signal_snapshot_t snapshot;
+
+    while (true) {
+        esp_err_t result =
+            app_queues_receive_signal_snapshot(
+                &snapshot,
+                portMAX_DELAY
+            );
+
+        if (result == ESP_OK) {
+            log_snapshot(&snapshot);
+        }
+    }
+}
+
+void app_main(void)
+{
+    ESP_LOGI(
+        TAG,
+        "Starting IoT Cooling Monitoring Firmware"
+    );
+
+    ESP_ERROR_CHECK(signal_registry_init());
+    ESP_ERROR_CHECK(app_queues_init());
+
+    ESP_ERROR_CHECK(signal_processing_init());
+    ESP_ERROR_CHECK(
+        signal_snapshot_manager_init()
+    );
+
+    BaseType_t monitor_result = xTaskCreate(
+        snapshot_monitor_task,
+        "snapshot_monitor",
+        SNAPSHOT_MONITOR_STACK_SIZE,
+        NULL,
+        SNAPSHOT_MONITOR_PRIORITY,
+        NULL
+    );
+
+    if (monitor_result != pdPASS) {
+        ESP_LOGE(
+            TAG,
+            "Failed to create snapshot monitor task"
+        );
+
+        return;
+    }
+
+    /*
+     * تشغيل المستهلكين من آخر المسار إلى أوله.
+     */
+    ESP_ERROR_CHECK(
+        signal_snapshot_manager_start()
+    );
+
+    ESP_ERROR_CHECK(
+        signal_processing_start()
+    );
+
+    ESP_ERROR_CHECK(
+        simulation_engine_init(
+            SIMULATION_SCENARIO_NORMAL
+        )
+    );
+
+    ESP_ERROR_CHECK(
+        simulation_engine_start()
+    );
+
+    ESP_LOGI(
+        TAG,
+        "Simulation → Processing → Snapshot pipeline started"
+    );
+}

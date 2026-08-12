@@ -1,0 +1,167 @@
+#include <inttypes.h>
+
+#include "alarm_engine.h"
+#include "app_queues.h"
+#include "app_types.h"
+#include "esp_err.h"
+#include "esp_log.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "signal_processing.h"
+#include "signal_registry.h"
+#include "signal_snapshot_manager.h"
+#include "simulation_engine.h"
+
+static const char *TAG = "MAIN";
+
+#define ALARM_MONITOR_STACK_SIZE   4096U
+#define ALARM_MONITOR_PRIORITY     4U
+
+static const char *alarm_transition_to_string(
+    alarm_transition_t transition
+)
+{
+    switch (transition) {
+        case ALARM_TRANSITION_PENDING:
+            return "pending";
+
+        case ALARM_TRANSITION_ACTIVATED:
+            return "activated";
+
+        case ALARM_TRANSITION_RETURNED:
+            return "returned";
+
+        case ALARM_TRANSITION_CLOSED:
+            return "closed";
+
+        case ALARM_TRANSITION_DEGRADED:
+            return "degraded";
+
+        case ALARM_TRANSITION_NONE:
+        default:
+            return "none";
+    }
+}
+
+static void log_alarm_event(
+    const alarm_event_t *event
+)
+{
+    ESP_LOGW(
+        TAG,
+        "ALARM code=%s instance=%" PRIu64
+        " sequence=%" PRIu32
+        " transition=%s source=%s quality=%s uptime=%" PRIu64,
+        event->alarm_code,
+        event->alarm_instance_id,
+        event->transition_sequence,
+        alarm_transition_to_string(
+            event->transition
+        ),
+        signal_registry_name(
+            event->source_signal
+        ),
+        signal_quality_to_string(
+            event->source_quality
+        ),
+        event->uptime_ms
+    );
+}
+
+static void alarm_monitor_task(
+    void *argument
+)
+{
+    (void)argument;
+
+    alarm_event_t event;
+
+    while (true) {
+        esp_err_t result =
+            app_queues_receive_alarm_event(
+                &event,
+                portMAX_DELAY
+            );
+
+        if (result == ESP_OK) {
+            log_alarm_event(&event);
+        }
+    }
+}
+
+void app_main(void)
+{
+    ESP_LOGI(
+        TAG,
+        "Starting IoT Cooling Monitoring Firmware"
+    );
+
+    ESP_ERROR_CHECK(
+        signal_registry_init()
+    );
+
+    ESP_ERROR_CHECK(
+        app_queues_init()
+    );
+
+    ESP_ERROR_CHECK(
+        signal_processing_init()
+    );
+
+    ESP_ERROR_CHECK(
+        signal_snapshot_manager_init()
+    );
+
+    ESP_ERROR_CHECK(
+        alarm_engine_init()
+    );
+
+    BaseType_t monitor_result =
+        xTaskCreate(
+            alarm_monitor_task,
+            "alarm_monitor",
+            ALARM_MONITOR_STACK_SIZE,
+            NULL,
+            ALARM_MONITOR_PRIORITY,
+            NULL
+        );
+
+    if (monitor_result != pdPASS) {
+        ESP_LOGE(
+            TAG,
+            "Failed to create alarm monitor task"
+        );
+
+        return;
+    }
+
+    /*
+     * التشغيل من آخر مستهلك إلى أول منتج.
+     */
+    ESP_ERROR_CHECK(
+        alarm_engine_start()
+    );
+
+    ESP_ERROR_CHECK(
+        signal_snapshot_manager_start()
+    );
+
+    ESP_ERROR_CHECK(
+        signal_processing_start()
+    );
+
+    ESP_ERROR_CHECK(
+        simulation_engine_init(
+            SIMULATION_SCENARIO_FULL_SYSTEM
+        )
+    );
+
+    ESP_ERROR_CHECK(
+        simulation_engine_start()
+    );
+
+    ESP_LOGI(
+        TAG,
+        "Simulation → Processing → Snapshot → Alarm pipeline started"
+    );
+}

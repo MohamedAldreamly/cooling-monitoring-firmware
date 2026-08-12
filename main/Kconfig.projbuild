@@ -1,0 +1,13 @@
+# put here your custom config value
+menu "Cooling Monitoring Firmware"
+
+config FIRMWARE_E2E_STORAGE_TEST
+    bool "Run Raw-to-SPIFFS end-to-end test on boot"
+    default y
+    help
+        Runs a deterministic Simulation Engine scenario whose raw samples
+        traverse Signal Processing, Snapshot Manager, Alarm Engine, Record
+        Builder, Record Queue and Storage Writer. Real drivers are not started.
+        Disable this option after completing the test.
+
+endmenu
