@@ -12,6 +12,9 @@ idf_component_register(
         "src/system_identity.c"
         "src/cloud_payload.c"
         "src/pipeline_test_monitor.c"
+        "src/upload_cursor.c"
+        "src/cloud_uploader.c"
+
     INCLUDE_DIRS "include"
     PRIV_INCLUDE_DIRS "private_include"
     PRIV_REQUIRES

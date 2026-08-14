@@ -9,9 +9,6 @@
 #include "freertos/task.h"
 #include "system_identity.h"
 
-#include "cloud_contract.h"
-#include "cloud_payload.h"
-#include "record_contract.h"
 
 static const char *TAG = "RECORD_BUILDER";
 
@@ -304,42 +301,6 @@ static void record_builder_task(void *argument)
 
     		continue;
 		}
-
-/*
- * Temporary Cloud Contract preview.
- *
- * Later this exact payload goes to MQTT instead of ESP_LOG.
- */
-		static char cloud_payload[
-	    	CLOUD_MQTT_PAYLOAD_MAX_LEN
-		];
-
-		esp_err_t cloud_result =
-    		cloud_payload_encode_alarm(
-        	&record,
-        	cloud_payload,
-        	sizeof(cloud_payload)
-    		);
-
-		if (cloud_result == ESP_OK) {
-    		ESP_LOGI(
-        	TAG,
-        	"MQTT PREVIEW TOPIC: %s",
-        	CLOUD_TOPIC_ALARM
-    	);
-	
-    	ESP_LOGI(
-        	TAG,
-        	"MQTT PREVIEW PAYLOAD: %s",
-        	cloud_payload
-    		);
-	} else {
-    	ESP_LOGW(
-        	TAG,
-        	"Failed encoding alarm MQTT payload: %s",
-        	esp_err_to_name(cloud_result)
-    		);
-	}
 
 		esp_err_t queue_result =
     		app_queues_send_record(

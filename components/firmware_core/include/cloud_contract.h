@@ -25,6 +25,27 @@ extern "C" {
 #define CLOUD_TOPIC_STATUS             \
     "cooling/" CLOUD_DEVICE_ID "/status"
 
+#define CLOUD_TOPIC_ALARM_ACK \
+    "cooling/" CLOUD_DEVICE_ID "/alarm/ack"
+
+/*
+ * Alarm publishing configuration.
+ */
+#define CLOUD_ALARM_PAYLOAD_MAX_LEN         1024U
+
+#define CLOUD_MQTT_QOS                      1
+#define CLOUD_MQTT_RETAIN                   0
+
+/*
+ * Maximum time to wait for an Application ACK.
+ */
+#define CLOUD_ACK_TIMEOUT_MS                10000U
+
+/*
+ * Delay before retrying a failed alarm upload.
+ */
+#define CLOUD_RETRY_DELAY_MS                5000U
+
 /*
  * Maximum JSON payload.
  *

@@ -10,9 +10,8 @@
 #include "simulation_engine.h"
 #include "storage_manager.h"
 #include "system_identity.h"
-
-#include "cloud_contract.h"
-#include "cloud_payload.h"
+#include "upload_cursor.h"
+#include "cloud_uploader.h"
 
 static const char *TAG = "MAIN";
 
@@ -38,41 +37,6 @@ void app_main(void)
     ESP_ERROR_CHECK(
         system_identity_init()
     );
-    
-    uint32_t boot_id = 0U;
-
-	ESP_ERROR_CHECK(
-    	system_identity_get_boot_id(
-        	&boot_id
-    	)
-	);
-
-	static char status_payload[
-	    	CLOUD_MQTT_PAYLOAD_MAX_LEN
-	];
-
-	ESP_ERROR_CHECK(
-    	cloud_payload_encode_status(
-        	boot_id,
-        	0U,
-        	true,
-        	"online",
-        	status_payload,
-        	sizeof(status_payload)
-    	)
-	);
-
-	ESP_LOGI(
-    	TAG,
-    	"MQTT PREVIEW TOPIC: %s",
-    	CLOUD_TOPIC_STATUS
-	);
-
-	ESP_LOGI(
-    	TAG,
-    	"MQTT PREVIEW PAYLOAD: %s",
-    	status_payload
-	);
 
     /*
      * Journal recovery is completed before producers start.
@@ -82,7 +46,47 @@ void app_main(void)
     );
 
     ESP_ERROR_CHECK(
+        upload_cursor_init()
+    );
+
+    storage_manager_status_t storage_status;
+upload_cursor_status_t cursor_status;
+
+ESP_ERROR_CHECK(
+    storage_manager_get_status(
+        &storage_status
+    )
+);
+
+ESP_ERROR_CHECK(
+    upload_cursor_get(
+        &cursor_status
+    )
+);
+
+if (cursor_status.next_offset >
+    storage_status.journal_size_bytes) {
+
+    ESP_LOGW(
+        TAG,
+        "Upload cursor exceeds journal: cursor=%llu journal=%llu",
+        (unsigned long long)
+            cursor_status.next_offset,
+        (unsigned long long)
+            storage_status.journal_size_bytes
+    );
+
+    ESP_ERROR_CHECK(
+        upload_cursor_reset()
+    );
+}
+
+    ESP_ERROR_CHECK(
         record_builder_init()
+    );
+
+    ESP_ERROR_CHECK(
+        cloud_uploader_init()
     );
 
     ESP_ERROR_CHECK(
@@ -102,6 +106,10 @@ void app_main(void)
      */
     ESP_ERROR_CHECK(
         storage_manager_start()
+    );
+
+    ESP_ERROR_CHECK(
+        cloud_uploader_start()
     );
 
     ESP_ERROR_CHECK(

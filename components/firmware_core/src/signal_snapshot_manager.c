@@ -12,13 +12,7 @@
 #include "signal_registry.h"
 #include "signal_snapshot_manager_internal.h"
 
-#include "cloud_contract.h"
-#include "cloud_payload.h"
-#include "system_identity.h"
-
 static const char *TAG = "SNAPSHOT_MANAGER";
-
-static uint64_t s_last_cloud_telemetry_ms = 0U;
 
 #define SNAPSHOT_MANAGER_TASK_NAME              "snapshot_manager"
 #define SNAPSHOT_MANAGER_TASK_STACK_SIZE        5120U
@@ -37,10 +31,6 @@ static latest_signal_entry_t
 static signal_snapshot_manager_status_t s_status;
 
 static bool s_stop_requested = false;
-
-static void snapshot_preview_cloud_telemetry(
-    const signal_snapshot_t *snapshot
-);
 
 static uint64_t snapshot_now_ms(void)
 {
@@ -441,9 +431,6 @@ static void signal_snapshot_manager_task(
             );
             
         if (build_result == ESP_OK) {
-            snapshot_preview_cloud_telemetry(
-                &snapshot
-            );
 
             esp_err_t queue_result =
                 app_queues_send_signal_snapshot(
@@ -587,72 +574,3 @@ bool signal_snapshot_manager_is_running(void)
     return s_status.running;
 }
 
-static void snapshot_preview_cloud_telemetry(
-    const signal_snapshot_t *snapshot
-)
-{
-    if (snapshot == NULL) {
-        return;
-    }
-
-    if ((snapshot->created_uptime_ms -
-         s_last_cloud_telemetry_ms) <
-        CLOUD_TELEMETRY_INTERVAL_MS) {
-
-        return;
-    }
-
-    uint32_t boot_id = 0U;
-
-    esp_err_t identity_result =
-        system_identity_get_boot_id(
-            &boot_id
-        );
-
-    if (identity_result != ESP_OK) {
-        ESP_LOGW(
-            TAG,
-            "Unable to get boot_id for telemetry: %s",
-            esp_err_to_name(identity_result)
-        );
-
-        return;
-    }
-
-    static char payload[
-        CLOUD_MQTT_PAYLOAD_MAX_LEN
-    ];
-
-    esp_err_t result =
-        cloud_payload_encode_telemetry(
-            snapshot,
-            boot_id,
-            payload,
-            sizeof(payload)
-        );
-
-    if (result != ESP_OK) {
-        ESP_LOGW(
-            TAG,
-            "Telemetry MQTT encoding failed: %s",
-            esp_err_to_name(result)
-        );
-
-        return;
-    }
-
-    s_last_cloud_telemetry_ms =
-        snapshot->created_uptime_ms;
-
-    ESP_LOGI(
-        TAG,
-        "MQTT PREVIEW TOPIC: %s",
-        CLOUD_TOPIC_TELEMETRY
-    );
-
-    ESP_LOGI(
-        TAG,
-        "MQTT PREVIEW PAYLOAD: %s",
-        payload
-    );
-}

@@ -1,6 +1,7 @@
 #include "storage_manager.h"
 
 #include <errno.h>
+#include <limits.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -413,6 +414,239 @@ esp_err_t storage_manager_append(
         storage_file_size(
             STORAGE_JOURNAL_PATH
         );
+
+    return ESP_OK;
+}
+
+esp_err_t storage_manager_read_record_at(
+    uint64_t offset,
+    storage_record_read_result_t *output
+)
+{
+    if (output == NULL) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    if (!s_status.initialized ||
+        !s_status.mounted) {
+
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    memset(output, 0, sizeof(*output));
+
+    const uint64_t journal_size =
+        storage_file_size(
+            STORAGE_JOURNAL_PATH
+        );
+
+    /*
+     * Offset exactly at the end means that there are
+     * currently no more committed records to read.
+     */
+    if (offset == journal_size) {
+        return ESP_ERR_NOT_FOUND;
+    }
+
+    if (offset > journal_size) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    /*
+     * SPIFFS partition size is expected to remain below
+     * the signed long limit used by fseek().
+     */
+    if (offset > (uint64_t)LONG_MAX) {
+        return ESP_ERR_INVALID_SIZE;
+    }
+
+    FILE *file = fopen(
+        STORAGE_JOURNAL_PATH,
+        "rb"
+    );
+
+    if (file == NULL) {
+        if (errno == ENOENT) {
+            return ESP_ERR_NOT_FOUND;
+        }
+
+        return ESP_FAIL;
+    }
+
+    if (fseek(
+            file,
+            (long)offset,
+            SEEK_SET
+        ) != 0) {
+
+        fclose(file);
+
+        return ESP_FAIL;
+    }
+
+    storage_record_header_t header;
+
+    const size_t header_read =
+        fread(
+            &header,
+            1U,
+            sizeof(header),
+            file
+        );
+
+    if ((header_read == 0U) &&
+        feof(file)) {
+
+        fclose(file);
+
+        return ESP_ERR_NOT_FOUND;
+    }
+
+    if (header_read != sizeof(header)) {
+        fclose(file);
+
+        return ESP_ERR_INVALID_SIZE;
+    }
+
+    if (!storage_header_is_valid(&header)) {
+        fclose(file);
+
+        return ESP_ERR_INVALID_CRC;
+    }
+
+    if (header.record_type >
+        (uint16_t)RECORD_TYPE_CONFIG_RESULT) {
+
+        fclose(file);
+
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    if (header.record_priority >
+        (uint16_t)RECORD_PRIORITY_CRITICAL) {
+
+        fclose(file);
+
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    if (header.requires_application_ack > 1U) {
+        fclose(file);
+
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    durable_record_t *record =
+        &output->record;
+
+    record->record_id =
+        header.record_id;
+
+    record->boot_id =
+        header.boot_id;
+
+    record->boot_sequence =
+        header.boot_sequence;
+
+    record->type =
+        (record_type_t)header.record_type;
+
+    record->priority =
+        (record_priority_t)
+        header.record_priority;
+
+    record->uptime_ms =
+        header.uptime_ms;
+
+    record->observed_at_ms =
+        header.observed_at_ms;
+
+    record->requires_application_ack =
+        header.requires_application_ack != 0U;
+
+    record->payload_length =
+        header.payload_length;
+
+    if (header.payload_length > 0U) {
+        const size_t payload_read =
+            fread(
+                record->payload,
+                1U,
+                header.payload_length,
+                file
+            );
+
+        if (payload_read !=
+            header.payload_length) {
+
+            fclose(file);
+
+            return ESP_ERR_INVALID_SIZE;
+        }
+    }
+
+    storage_record_footer_t footer;
+
+    const size_t footer_read =
+        fread(
+            &footer,
+            1U,
+            sizeof(footer),
+            file
+        );
+
+    if (footer_read != sizeof(footer)) {
+        fclose(file);
+
+        return ESP_ERR_INVALID_SIZE;
+    }
+
+    if (footer.commit_marker !=
+        STORAGE_RECORD_COMMIT_MARKER) {
+
+        fclose(file);
+
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    const uint32_t calculated_payload_crc =
+        storage_crc32(
+            record->payload,
+            record->payload_length
+        );
+
+    if (calculated_payload_crc !=
+        footer.payload_crc) {
+
+        fclose(file);
+
+        return ESP_ERR_INVALID_CRC;
+    }
+
+    output->record_offset = offset;
+
+    output->next_offset =
+        offset +
+        sizeof(header) +
+        header.payload_length +
+        sizeof(footer);
+
+    /*
+     * Protect against arithmetic overflow or a record
+     * claiming to extend beyond the current journal.
+     */
+    if ((output->next_offset < offset) ||
+        (output->next_offset >
+         journal_size)) {
+
+        fclose(file);
+
+        memset(output, 0, sizeof(*output));
+
+        return ESP_ERR_INVALID_SIZE;
+    }
+
+    fclose(file);
 
     return ESP_OK;
 }

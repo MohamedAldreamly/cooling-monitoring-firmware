@@ -1,5 +1,7 @@
 #include "cloud_payload.h"
 
+#include <inttypes.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "cJSON.h"
@@ -125,229 +127,6 @@ static esp_err_t cloud_add_common_fields(
     }
 
     return ESP_OK;
-}
-
-static esp_err_t cloud_add_signal_value(
-    cJSON *signals,
-    const signal_value_t *value
-)
-{
-    if ((signals == NULL) ||
-        (value == NULL)) {
-
-        return ESP_ERR_INVALID_ARG;
-    }
-
-    const char *signal_name =
-        signal_registry_name(
-            value->signal_id
-        );
-
-    if (signal_name == NULL) {
-        return ESP_ERR_NOT_FOUND;
-    }
-
-    cJSON *signal_object =
-        cJSON_CreateObject();
-
-    if (signal_object == NULL) {
-        return ESP_ERR_NO_MEM;
-    }
-
-    bool success = true;
-
-    /*
-     * Invalid measurements are explicitly represented
-     * as JSON null instead of fake numeric values.
-     */
-    if (!value->has_value) {
-        if (cJSON_AddNullToObject(
-                signal_object,
-                "value"
-            ) == NULL) {
-
-            success = false;
-        }
-    } else {
-        switch (value->data_type) {
-            case SIGNAL_DATA_TYPE_BOOL:
-                if (cJSON_AddBoolToObject(
-                        signal_object,
-                        "value",
-                        value->value.boolean
-                    ) == NULL) {
-
-                    success = false;
-                }
-                break;
-
-            case SIGNAL_DATA_TYPE_FLOAT32:
-                if (cJSON_AddNumberToObject(
-                        signal_object,
-                        "value",
-                        (double)value->value.float32
-                    ) == NULL) {
-
-                    success = false;
-                }
-                break;
-
-            case SIGNAL_DATA_TYPE_INT32:
-                if (cJSON_AddNumberToObject(
-                        signal_object,
-                        "value",
-                        (double)value->value.int32
-                    ) == NULL) {
-
-                    success = false;
-                }
-                break;
-
-            case SIGNAL_DATA_TYPE_UINT32:
-                if (cJSON_AddNumberToObject(
-                        signal_object,
-                        "value",
-                        (double)value->value.uint32
-                    ) == NULL) {
-
-                    success = false;
-                }
-                break;
-
-            default:
-                success = false;
-                break;
-        }
-    }
-
-    if (success) {
-        if (cJSON_AddStringToObject(
-                signal_object,
-                "quality",
-                signal_quality_to_string(
-                    value->quality
-                )
-            ) == NULL) {
-
-            success = false;
-        }
-    }
-
-    if (success &&
-        value->unit != SIGNAL_UNIT_NONE) {
-
-        if (cJSON_AddStringToObject(
-                signal_object,
-                "unit",
-                signal_unit_to_string(
-                    value->unit
-                )
-            ) == NULL) {
-
-            success = false;
-        }
-    }
-
-    if (!success) {
-        cJSON_Delete(signal_object);
-
-        return ESP_ERR_NO_MEM;
-    }
-
-    cJSON_AddItemToObject(
-        signals,
-        signal_name,
-        signal_object
-    );
-
-    return ESP_OK;
-}
-
-esp_err_t cloud_payload_encode_telemetry(
-    const signal_snapshot_t *snapshot,
-    uint32_t boot_id,
-    char *buffer,
-    size_t buffer_size
-)
-{
-    if ((snapshot == NULL) ||
-        (buffer == NULL) ||
-        (buffer_size == 0U)) {
-
-        return ESP_ERR_INVALID_ARG;
-    }
-
-    cJSON *root = cJSON_CreateObject();
-
-    if (root == NULL) {
-        return ESP_ERR_NO_MEM;
-    }
-
-    esp_err_t result =
-        cloud_add_common_fields(
-            root,
-            "telemetry",
-            boot_id,
-            snapshot->created_uptime_ms,
-            snapshot->observed_at_ms
-        );
-
-    if (result != ESP_OK) {
-        cJSON_Delete(root);
-
-        return result;
-    }
-
-    if (cJSON_AddNumberToObject(
-            root,
-            "sequence",
-            (double)snapshot->snapshot_sequence
-        ) == NULL) {
-
-        cJSON_Delete(root);
-
-        return ESP_ERR_NO_MEM;
-    }
-
-    cJSON *signals =
-        cJSON_AddObjectToObject(
-            root,
-            "signals"
-        );
-
-    if (signals == NULL) {
-        cJSON_Delete(root);
-
-        return ESP_ERR_NO_MEM;
-    }
-
-    for (size_t index = 0U;
-         index < snapshot->signal_count;
-         index++) {
-
-        result =
-            cloud_add_signal_value(
-                signals,
-                &snapshot->signals[index]
-            );
-
-        if (result != ESP_OK) {
-            cJSON_Delete(root);
-
-            return result;
-        }
-    }
-
-    result =
-        cloud_json_print(
-            root,
-            buffer,
-            buffer_size
-        );
-
-    cJSON_Delete(root);
-
-    return result;
 }
 
 static const char *cloud_alarm_severity_string(
@@ -484,6 +263,70 @@ static esp_err_t cloud_add_alarm_source_value(
     return ESP_OK;
 }
 
+static bool cloud_alarm_event_is_valid(
+    const alarm_event_t *event
+)
+{
+    if (event == NULL) {
+        return false;
+    }
+
+    /*
+     * alarm_code must not be empty and must contain
+     * a null terminator inside its fixed-size array.
+     */
+    if ((event->alarm_code[0] == '\0') ||
+        (memchr(
+            event->alarm_code,
+            '\0',
+            sizeof(event->alarm_code)
+        ) == NULL)) {
+
+        return false;
+    }
+
+    if (event->alarm_instance_id == 0U) {
+        return false;
+    }
+
+    if (event->transition_sequence == 0U) {
+        return false;
+    }
+
+    if (event->source_signal >= SIGNAL_ID_COUNT) {
+        return false;
+    }
+
+    if (event->severity >
+        ALARM_SEVERITY_CRITICAL) {
+
+        return false;
+    }
+
+    if ((event->transition ==
+         ALARM_TRANSITION_NONE) ||
+        (event->transition >
+         ALARM_TRANSITION_DEGRADED)) {
+
+        return false;
+    }
+
+    if (event->source_quality >
+        SIGNAL_QUALITY_SUBSTITUTED) {
+
+        return false;
+    }
+
+    if (event->has_source_value &&
+        event->source_data_type >
+            SIGNAL_DATA_TYPE_FLOAT32) {
+
+        return false;
+    }
+
+    return true;
+}
+
 esp_err_t cloud_payload_encode_alarm(
     const durable_record_t *record,
     char *buffer,
@@ -530,6 +373,48 @@ esp_err_t cloud_payload_encode_alarm(
     const alarm_event_t *event =
         &payload.alarm_event;
 
+    if (!cloud_alarm_event_is_valid(event)) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    const char *source_signal_name =
+        signal_registry_name(
+            event->source_signal
+        );
+
+    if (source_signal_name == NULL) {
+        return ESP_ERR_NOT_FOUND;
+    }
+
+    char record_id_string[21];
+    char alarm_instance_id_string[21];
+
+    const int record_id_length =
+        snprintf(
+            record_id_string,
+            sizeof(record_id_string),
+            "%" PRIu64,
+            record->record_id
+        );
+
+    const int alarm_instance_id_length =
+        snprintf(
+            alarm_instance_id_string,
+            sizeof(alarm_instance_id_string),
+            "%" PRIu64,
+            event->alarm_instance_id
+        );
+
+    if ((record_id_length < 0) ||
+        ((size_t)record_id_length >=
+        sizeof(record_id_string)) ||
+        (alarm_instance_id_length < 0) ||
+        ((size_t)alarm_instance_id_length >=
+        sizeof(alarm_instance_id_string))) {
+
+        return ESP_ERR_INVALID_SIZE;
+    }
+
     cJSON *root = cJSON_CreateObject();
 
     if (root == NULL) {
@@ -545,22 +430,28 @@ esp_err_t cloud_payload_encode_alarm(
             record->observed_at_ms
         );
 
-    if (result != ESP_OK) {
-        cJSON_Delete(root);
+        if (result != ESP_OK) {
+            cJSON_Delete(root);
 
-        return result;
-    }
+            return result;
+        }
 
-    if (cJSON_AddNumberToObject(
+        if (cJSON_AddStringToObject(
             root,
             "record_id",
-            (double)record->record_id
+            record_id_string
         ) == NULL ||
 
         cJSON_AddNumberToObject(
             root,
+            "boot_sequence",
+            (double)record->boot_sequence
+        ) == NULL ||
+
+        cJSON_AddStringToObject(
+            root,
             "alarm_instance_id",
-            (double)event->alarm_instance_id
+            alarm_instance_id_string
         ) == NULL ||
 
         cJSON_AddNumberToObject(
@@ -588,15 +479,13 @@ esp_err_t cloud_payload_encode_alarm(
             "transition",
             cloud_alarm_transition_string(
                 event->transition
-            )
+               )
         ) == NULL ||
 
         cJSON_AddStringToObject(
             root,
             "source_signal",
-            signal_registry_name(
-                event->source_signal
-            )
+            source_signal_name
         ) == NULL ||
 
         cJSON_AddStringToObject(
@@ -607,7 +496,7 @@ esp_err_t cloud_payload_encode_alarm(
             )
         ) == NULL) {
 
-        cJSON_Delete(root);
+    cJSON_Delete(root);
 
         return ESP_ERR_NO_MEM;
     }
@@ -622,78 +511,6 @@ esp_err_t cloud_payload_encode_alarm(
         cJSON_Delete(root);
 
         return result;
-    }
-
-    result =
-        cloud_json_print(
-            root,
-            buffer,
-            buffer_size
-        );
-
-    cJSON_Delete(root);
-
-    return result;
-}
-
-esp_err_t cloud_payload_encode_status(
-    uint32_t boot_id,
-    uint64_t uptime_ms,
-    bool simulation,
-    const char *status,
-    char *buffer,
-    size_t buffer_size
-)
-{
-    if ((status == NULL) ||
-        (buffer == NULL) ||
-        (buffer_size == 0U)) {
-
-        return ESP_ERR_INVALID_ARG;
-    }
-
-    cJSON *root = cJSON_CreateObject();
-
-    if (root == NULL) {
-        return ESP_ERR_NO_MEM;
-    }
-
-    esp_err_t result =
-        cloud_add_common_fields(
-            root,
-            "status",
-            boot_id,
-            uptime_ms,
-            0
-        );
-
-    if (result != ESP_OK) {
-        cJSON_Delete(root);
-
-        return result;
-    }
-
-    if (cJSON_AddStringToObject(
-            root,
-            "firmware_version",
-            CLOUD_FIRMWARE_VERSION
-        ) == NULL ||
-
-        cJSON_AddStringToObject(
-            root,
-            "status",
-            status
-        ) == NULL ||
-
-        cJSON_AddBoolToObject(
-            root,
-            "simulation",
-            simulation
-        ) == NULL) {
-
-        cJSON_Delete(root);
-
-        return ESP_ERR_NO_MEM;
     }
 
     result =
