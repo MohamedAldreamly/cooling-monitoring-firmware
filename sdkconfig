@@ -532,6 +532,15 @@ CONFIG_PARTITION_TABLE_MD5=y
 # Cooling Monitoring Firmware
 #
 CONFIG_FIRMWARE_E2E_STORAGE_TEST=y
+
+#
+# Wi-Fi Configuration
+#
+CONFIG_FIRMWARE_WIFI_ENABLED=y
+CONFIG_FIRMWARE_WIFI_SSID="Wokwi-GUEST"
+CONFIG_FIRMWARE_WIFI_PASSWORD=""
+CONFIG_FIRMWARE_WIFI_MAXIMUM_RETRY=10
+# end of Wi-Fi Configuration
 # end of Cooling Monitoring Firmware
 
 #

@@ -14,6 +14,11 @@ idf_component_register(
         "src/pipeline_test_monitor.c"
         "src/upload_cursor.c"
         "src/cloud_uploader.c"
+        "src/wifi_manager.c"
+        "src/cloud_transport.c"
+        "src/connectivity_test_controller.c"
+        "src/runtime_shadow.c"
+        "src/record_decoder.c"
 
     INCLUDE_DIRS "include"
     PRIV_INCLUDE_DIRS "private_include"
@@ -24,4 +29,15 @@ idf_component_register(
         spiffs
         nvs_flash
         json
+        esp_event
+        esp_netif
+        esp_wifi
+        mqtt
+        esp-tls
+        mbedtls
+
+    EMBED_TXTFILES
+        "certs/device_certificate.pem.crt"
+        "certs/device_private_key.pem.key"
 )
+

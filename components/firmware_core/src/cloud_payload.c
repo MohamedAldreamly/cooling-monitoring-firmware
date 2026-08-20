@@ -10,6 +10,8 @@
 #include "record_contract.h"
 #include "signal_registry.h"
 
+#include "record_decoder.h"
+
 static esp_err_t cloud_json_print(
     cJSON *root,
     char *buffer,
@@ -344,34 +346,20 @@ esp_err_t cloud_payload_encode_alarm(
         return ESP_ERR_INVALID_ARG;
     }
 
-    if (record->payload_length !=
-        sizeof(alarm_record_payload_v1_t)) {
+    decoded_alarm_record_t decoded;
 
-        return ESP_ERR_INVALID_SIZE;
-    }
+    esp_err_t decode_result =
+        record_decoder_decode_alarm(
+            record,
+            &decoded
+        );
 
-    alarm_record_payload_v1_t payload;
-
-    memcpy(
-        &payload,
-        record->payload,
-        sizeof(payload)
-    );
-
-    if (payload.payload_version !=
-        ALARM_RECORD_PAYLOAD_VERSION) {
-
-        return ESP_ERR_INVALID_VERSION;
-    }
-
-    if (payload.payload_size !=
-        sizeof(alarm_record_payload_v1_t)) {
-
-        return ESP_ERR_INVALID_SIZE;
+    if (decode_result != ESP_OK) {
+        return decode_result;
     }
 
     const alarm_event_t *event =
-        &payload.alarm_event;
+        &decoded.alarm_event;
 
     if (!cloud_alarm_event_is_valid(event)) {
         return ESP_ERR_INVALID_ARG;
@@ -524,3 +512,4 @@ esp_err_t cloud_payload_encode_alarm(
 
     return result;
 }
+

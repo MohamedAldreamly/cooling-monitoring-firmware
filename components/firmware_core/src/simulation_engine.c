@@ -191,22 +191,45 @@ static void simulation_update_storage_pipeline_test(
     uint64_t uptime_ms
 )
 {
+    /*
+     * Repeating E2E storage/cloud test.
+     *
+     * One cycle lasts 25 seconds:
+     *   0-3 s   : normal baseline
+     *   3-18 s  : ROOM_TEMP_01 = -5 C
+     *             (> -12 C for 15 s, exceeding the existing
+     *              10-second alarm activation delay)
+     *   18-25 s : ROOM_TEMP_01 = -18 C
+     *             (< -14 C for 7 s, exceeding the existing
+     *              5-second return delay)
+     *
+     * The cycle repeats forever. This deliberately produces repeated
+     * ALARM ACTIVE / ALARM CLEARED events, which is useful for testing
+     * journal accumulation while the cloud path is unavailable.
+     */
     const uint64_t elapsed_ms =
         uptime_ms - s_scenario_started_ms;
+
+    const uint64_t cycle_duration_ms =
+        25000ULL;
+
+    const uint64_t cycle_index =
+        elapsed_ms / cycle_duration_ms;
+
+    const uint64_t cycle_ms =
+        elapsed_ms % cycle_duration_ms;
 
     simulation_update_normal(uptime_ms);
 
     uint8_t phase = 0U;
 
-    if (elapsed_ms < 3000ULL) {
+    if (cycle_ms < 3000ULL) {
         s_process_state.room_temperature[0] = -18.0f;
         phase = 0U;
-    } else if (elapsed_ms < 18000ULL) {
-        /* Hold above -12 C beyond the 10-second activation delay. */
+    } else if (cycle_ms < 18000ULL) {
         s_process_state.room_temperature[0] = -5.0f;
         phase = 1U;
     } else {
-        /* Hold below -14 C beyond the 5-second return delay. */
         s_process_state.room_temperature[0] = -18.0f;
         phase = 2U;
     }
@@ -221,9 +244,11 @@ static void simulation_update_storage_pipeline_test(
 
         ESP_LOGI(
             TAG,
-            "E2E phase=%s ROOM_TEMP_01=%.1f C elapsed=%llu ms",
+            "E2E cycle=%llu phase=%s ROOM_TEMP_01=%.1f C cycle_ms=%llu total_elapsed=%llu ms",
+            (unsigned long long)cycle_index,
             phase_name,
             (double)s_process_state.room_temperature[0],
+            (unsigned long long)cycle_ms,
             (unsigned long long)elapsed_ms
         );
     }

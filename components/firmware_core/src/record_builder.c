@@ -8,7 +8,9 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "system_identity.h"
+#include "record_contract.h"
 
+#include "runtime_shadow.h"
 
 static const char *TAG = "RECORD_BUILDER";
 
@@ -302,27 +304,51 @@ static void record_builder_task(void *argument)
     		continue;
 		}
 
-		esp_err_t queue_result =
-    		app_queues_send_record(
-        	&record,
-        	pdMS_TO_TICKS(
-            	RECORD_QUEUE_SEND_TIMEOUT_MS
-        		)
-    		);
+	    esp_err_t queue_result =
+        app_queues_send_record(
+            &record,
+            pdMS_TO_TICKS(
+                RECORD_QUEUE_SEND_TIMEOUT_MS
+            )
+        );
 
         if (queue_result != ESP_OK) {
-            s_status.record_queue_failures++;
+        s_status.record_queue_failures++;
 
-            ESP_LOGW(
-                TAG,
-                "Record queue full: record_id=%llu",
-                (unsigned long long)record.record_id
-            );
-
+        ESP_LOGW(
+            TAG,
+            "Record queue full: record_id=%llu",
+            (unsigned long long)record.record_id
+        );
+        
             continue;
         }
 
         s_status.records_published++;
+
+        /*
+        * Update AWS Runtime Shadow with the latest
+        * Alarm state.
+        *
+        * Shadow is auxiliary. A Shadow failure must
+        * never break the durable record pipeline.
+        */
+        const esp_err_t shadow_result =
+            runtime_shadow_update_alarm(
+                &record 
+            );
+
+        if (shadow_result != ESP_OK) {
+
+            ESP_LOGW(
+                TAG,
+                "Runtime Shadow update failed: "
+                "record_id=%llu error=%s",
+                (unsigned long long)record.record_id,
+                esp_err_to_name(shadow_result)
+            );
+        }
+
 
         ESP_LOGI(
             TAG,

@@ -8,9 +8,9 @@ static const char *TAG = "APP_QUEUES";
 
 static QueueHandle_t s_raw_sample_queue = NULL;
 static QueueHandle_t s_signal_value_queue = NULL;
+static QueueHandle_t s_signal_snapshot_queue = NULL;
 static QueueHandle_t s_alarm_event_queue = NULL;
 static QueueHandle_t s_record_queue = NULL;
-static QueueHandle_t s_signal_snapshot_queue = NULL;
 
 static bool s_initialized = false;
 static app_queue_counters_t s_counters;

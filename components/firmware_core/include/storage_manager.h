@@ -143,11 +143,6 @@ bool storage_manager_is_running(void);
  * @param output Reconstructed durable record.
  * @param read_result Offset of the following record and EOF state.
  */
-esp_err_t storage_manager_read_record(
-    uint64_t offset,
-    durable_record_t *output,
-    storage_read_result_t *read_result
-);
 
 #ifdef __cplusplus
 }
