@@ -1,0 +1,46 @@
+menu "Cooling Monitoring Firmware"
+
+config FIRMWARE_E2E_STORAGE_TEST
+    bool "Run Raw-to-SPIFFS end-to-end test on boot"
+    default y
+    help
+        Runs a deterministic Simulation Engine scenario whose raw samples
+        traverse Signal Processing, Snapshot Manager, Alarm Engine, Record
+        Builder, Record Queue and Storage Writer. Real drivers are not started.
+        Disable this option after completing the test.
+
+menu "Wi-Fi Configuration"
+
+config FIRMWARE_WIFI_ENABLED
+    bool "Enable Wi-Fi station"
+    default y
+    help
+        Enables the Wi-Fi station used by the cloud transport.
+
+config FIRMWARE_WIFI_SSID
+    string "Wi-Fi SSID"
+    depends on FIRMWARE_WIFI_ENABLED
+    default "Wokwi-GUEST"
+    help
+        Wi-Fi network name. Wokwi uses Wokwi-GUEST.
+
+config FIRMWARE_WIFI_PASSWORD
+    string "Wi-Fi password"
+    depends on FIRMWARE_WIFI_ENABLED
+    default ""
+    help
+        Wi-Fi password. Leave empty for Wokwi-GUEST.
+
+config FIRMWARE_WIFI_MAXIMUM_RETRY
+    int "Maximum connection retries"
+    depends on FIRMWARE_WIFI_ENABLED
+    range 1 100
+    default 10
+    help
+        Number of failed connection attempts before entering
+        the disconnected state. Automatic reconnection remains
+        available after initialization.
+
+endmenu
+
+endmenu

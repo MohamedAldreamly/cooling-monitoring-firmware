@@ -1,0 +1,41 @@
+# ===============================
+# ESP-IDF
+# ===============================
+firmware/build/
+firmware/sdkconfig.old
+firmware/sdkconfig.old.*
+
+# Eclipse / local IDE
+firmware/.settings/
+firmware/.project
+firmware/.cproject
+
+# ===============================
+# React / Vite
+# ===============================
+cooling-dashboard/node_modules/
+cooling-dashboard/dist/
+
+# Local environment
+cooling-dashboard/.env
+cooling-dashboard/.env.local
+cooling-dashboard/.env.*.local
+
+# ===============================
+# Archives
+# ===============================
+*.zip
+*.rar
+*.7z
+
+# ===============================
+# Logs / temporary
+# ===============================
+*.log
+*.tmp
+*.temp
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store

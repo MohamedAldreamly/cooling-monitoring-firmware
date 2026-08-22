@@ -1,0 +1,431 @@
+ build/.bin_timestamp                               |     1 [31m-[m
+ build/.ninja_deps                                  |   Bin [31m712284[m -> [32m0[m bytes
+ build/.ninja_log                                   |  1047 [31m-[m
+ build/CMakeCache.txt                               |   605 [31m-[m
+ build/CMakeFiles/3.24.0/CMakeASMCompiler.cmake     |    20 [31m-[m
+ build/CMakeFiles/3.24.0/CMakeCCompiler.cmake       |    72 [31m-[m
+ build/CMakeFiles/3.24.0/CMakeCXXCompiler.cmake     |    83 [31m-[m
+ .../3.24.0/CMakeDetermineCompilerABI_C.bin         |   Bin [31m4160[m -> [32m0[m bytes
+ .../3.24.0/CMakeDetermineCompilerABI_CXX.bin       |   Bin [31m4180[m -> [32m0[m bytes
+ build/CMakeFiles/3.24.0/CMakeSystem.cmake          |    15 [31m-[m
+ .../3.24.0/CompilerIdC/CMakeCCompilerId.c          |   838 [31m-[m
+ build/CMakeFiles/3.24.0/CompilerIdC/a.out          |   Bin [31m4416[m -> [32m0[m bytes
+ .../3.24.0/CompilerIdCXX/CMakeCXXCompilerId.cpp    |   826 [31m-[m
+ build/CMakeFiles/3.24.0/CompilerIdCXX/a.out        |   Bin [31m4400[m -> [32m0[m bytes
+ build/CMakeFiles/CMakeOutput.log                   |   453 [31m-[m
+ build/CMakeFiles/TargetDirectories.txt             |   837 [31m-[m
+ build/CMakeFiles/bootloader-complete               |     0
+ build/CMakeFiles/bootloader.dir/Labels.json        |    43 [31m-[m
+ build/CMakeFiles/bootloader.dir/Labels.txt         |    13 [31m-[m
+ build/CMakeFiles/clean_additional.cmake            |    24 [31m-[m
+ build/CMakeFiles/cmake.check_cache                 |     1 [31m-[m
+ .../project_elf_src_esp32s3.c.obj                  |   Bin [31m724[m -> [32m0[m bytes
+ build/CMakeFiles/git-data/HEAD                     |     1 [31m-[m
+ build/CMakeFiles/git-data/grabRef.cmake            |    50 [31m-[m
+ build/CMakeFiles/git-data/head-ref                 |     1 [31m-[m
+ build/CMakeFiles/rules.ninja                       |  1848 [31m-[m
+ build/app-flash_args                               |     2 [31m-[m
+ build/bootloader-flash_args                        |     2 [31m-[m
+ .../src/bootloader-stamp/bootloader-configure      |     0
+ .../src/bootloader-stamp/bootloader-done           |     0
+ .../src/bootloader-stamp/bootloader-download       |     0
+ .../src/bootloader-stamp/bootloader-install        |     0
+ .../src/bootloader-stamp/bootloader-mkdir          |     0
+ .../src/bootloader-stamp/bootloader-patch          |     0
+ .../bootloader-stamp/bootloader-source_dirinfo.txt |     9 [31m-[m
+ .../src/bootloader-stamp/bootloader-update         |     0
+ build/bootloader-prefix/tmp/bootloader-cfgcmd.txt  |     1 [31m-[m
+ .../bootloader-prefix/tmp/bootloader-mkdirs.cmake  |    22 [31m-[m
+ build/bootloader/.bin_timestamp                    |     1 [31m-[m
+ build/bootloader/.ninja_deps                       |   Bin [31m66960[m -> [32m0[m bytes
+ build/bootloader/.ninja_log                        |   117 [31m-[m
+ build/bootloader/CMakeCache.txt                    |   439 [31m-[m
+ .../CMakeFiles/3.24.0/CMakeASMCompiler.cmake       |    20 [31m-[m
+ .../CMakeFiles/3.24.0/CMakeCCompiler.cmake         |    72 [31m-[m
+ .../CMakeFiles/3.24.0/CMakeCXXCompiler.cmake       |    83 [31m-[m
+ .../3.24.0/CMakeDetermineCompilerABI_C.bin         |   Bin [31m4160[m -> [32m0[m bytes
+ .../3.24.0/CMakeDetermineCompilerABI_CXX.bin       |   Bin [31m4180[m -> [32m0[m bytes
+ .../bootloader/CMakeFiles/3.24.0/CMakeSystem.cmake |    15 [31m-[m
+ .../3.24.0/CompilerIdC/CMakeCCompilerId.c          |   838 [31m-[m
+ .../bootloader/CMakeFiles/3.24.0/CompilerIdC/a.out |   Bin [31m4416[m -> [32m0[m bytes
+ .../3.24.0/CompilerIdCXX/CMakeCXXCompilerId.cpp    |   826 [31m-[m
+ .../CMakeFiles/3.24.0/CompilerIdCXX/a.out          |   Bin [31m4400[m -> [32m0[m bytes
+ build/bootloader/CMakeFiles/CMakeOutput.log        |   410 [31m-[m
+ build/bootloader/CMakeFiles/TargetDirectories.txt  |    88 [31m-[m
+ .../project_elf_src_esp32s3.c.obj                  |   Bin [31m724[m -> [32m0[m bytes
+ build/bootloader/CMakeFiles/clean_additional.cmake |    12 [31m-[m
+ build/bootloader/CMakeFiles/cmake.check_cache      |     1 [31m-[m
+ build/bootloader/CMakeFiles/git-data/HEAD          |     1 [31m-[m
+ build/bootloader/CMakeFiles/git-data/grabRef.cmake |    50 [31m-[m
+ build/bootloader/CMakeFiles/git-data/head-ref      |     1 [31m-[m
+ build/bootloader/CMakeFiles/rules.ninja            |   348 [31m-[m
+ build/bootloader/bootloader.bin                    |   Bin [31m21088[m -> [32m0[m bytes
+ build/bootloader/bootloader.elf                    |   Bin [31m532528[m -> [32m0[m bytes
+ build/bootloader/bootloader.map                    |  7133 [31m----[m
+ build/bootloader/build.ninja                       |  2706 [31m--[m
+ build/bootloader/cmake_install.cmake               |    54 [31m-[m
+ build/bootloader/compile_commands.json             |   477 [31m-[m
+ build/bootloader/config.env                        |    12 [31m-[m
+ build/bootloader/config/kconfig_menus.json         | 10788 [31m------[m
+ build/bootloader/config/sdkconfig.cmake            |   854 [31m-[m
+ build/bootloader/config/sdkconfig.h                |   638 [31m-[m
+ build/bootloader/config/sdkconfig.json             |   752 [31m-[m
+ .../esp-idf/bootloader/cmake_install.cmake         |    39 [31m-[m
+ .../bootloader_flash/src/bootloader_flash.c.obj    |   Bin [31m123580[m -> [32m0[m bytes
+ .../src/bootloader_flash_config_esp32s3.c.obj      |   Bin [31m33012[m -> [32m0[m bytes
+ .../bootloader_flash/src/flash_qio_mode.c.obj      |   Bin [31m30840[m -> [32m0[m bytes
+ .../src/bootloader_clock_init.c.obj                |   Bin [31m9548[m -> [32m0[m bytes
+ .../src/bootloader_clock_loader.c.obj              |   Bin [31m4212[m -> [32m0[m bytes
+ .../src/bootloader_common.c.obj                    |   Bin [31m41764[m -> [32m0[m bytes
+ .../src/bootloader_common_loader.c.obj             |   Bin [31m24164[m -> [32m0[m bytes
+ .../src/bootloader_console.c.obj                   |   Bin [31m22116[m -> [32m0[m bytes
+ .../src/bootloader_console_loader.c.obj            |   Bin [31m4248[m -> [32m0[m bytes
+ .../src/bootloader_efuse.c.obj                     |   Bin [31m36156[m -> [32m0[m bytes
+ .../src/bootloader_init.c.obj                      |   Bin [31m66628[m -> [32m0[m bytes
+ .../src/bootloader_mem.c.obj                       |   Bin [31m3868[m -> [32m0[m bytes
+ .../src/bootloader_panic.c.obj                     |   Bin [31m7308[m -> [32m0[m bytes
+ .../src/bootloader_random.c.obj                    |   Bin [31m8100[m -> [32m0[m bytes
+ .../src/bootloader_random_esp32s3.c.obj            |   Bin [31m10280[m -> [32m0[m bytes
+ .../src/bootloader_utility.c.obj                   |   Bin [31m77544[m -> [32m0[m bytes
+ .../src/esp32s3/bootloader_esp32s3.c.obj           |   Bin [31m27676[m -> [32m0[m bytes
+ .../src/esp32s3/bootloader_sha.c.obj               |   Bin [31m10180[m -> [32m0[m bytes
+ .../src/esp32s3/bootloader_soc.c.obj               |   Bin [31m6932[m -> [32m0[m bytes
+ .../src/esp_image_format.c.obj                     |   Bin [31m92876[m -> [32m0[m bytes
+ .../src/flash_encrypt.c.obj                        |   Bin [31m29612[m -> [32m0[m bytes
+ .../src/flash_partitions.c.obj                     |   Bin [31m13528[m -> [32m0[m bytes
+ .../src/secure_boot.c.obj                          |   Bin [31m2288[m -> [32m0[m bytes
+ .../esp-idf/bootloader_support/cmake_install.cmake |    39 [31m-[m
+ .../bootloader_support/libbootloader_support.a     |   Bin [31m691908[m -> [32m0[m bytes
+ build/bootloader/esp-idf/cmake_install.cmake       |   139 [31m-[m
+ .../__idf_efuse.dir/esp32s3/esp_efuse_fields.c.obj |   Bin [31m10840[m -> [32m0[m bytes
+ .../esp32s3/esp_efuse_rtc_calib.c.obj              |   Bin [31m24940[m -> [32m0[m bytes
+ .../__idf_efuse.dir/esp32s3/esp_efuse_table.c.obj  |   Bin [31m117908[m -> [32m0[m bytes
+ .../esp32s3/esp_efuse_utility.c.obj                |   Bin [31m26800[m -> [32m0[m bytes
+ .../keys/with_key_purposes/esp_efuse_api_key.c.obj |   Bin [31m64016[m -> [32m0[m bytes
+ .../__idf_efuse.dir/src/esp_efuse_api.c.obj        |   Bin [31m46964[m -> [32m0[m bytes
+ .../__idf_efuse.dir/src/esp_efuse_fields.c.obj     |   Bin [31m18484[m -> [32m0[m bytes
+ .../__idf_efuse.dir/src/esp_efuse_utility.c.obj    |   Bin [31m63996[m -> [32m0[m bytes
+ build/bootloader/esp-idf/efuse/cmake_install.cmake |    39 [31m-[m
+ build/bootloader/esp-idf/efuse/libefuse.a          |   Bin [31m385044[m -> [32m0[m bytes
+ .../esp-idf/esp_app_format/cmake_install.cmake     |    39 [31m-[m
+ .../esp_bootloader_desc.c.obj                      |   Bin [31m4852[m -> [32m0[m bytes
+ .../esp_bootloader_format/cmake_install.cmake      |    39 [31m-[m
+ .../libesp_bootloader_format.a                     |   Bin [31m5132[m -> [32m0[m bytes
+ .../__idf_esp_common.dir/src/esp_err_to_name.c.obj |   Bin [31m10644[m -> [32m0[m bytes
+ .../esp-idf/esp_common/cmake_install.cmake         |    39 [31m-[m
+ .../bootloader/esp-idf/esp_common/libesp_common.a  |   Bin [31m10902[m -> [32m0[m bytes
+ .../CMakeFiles/__idf_esp_hw_support.dir/cpu.c.obj  |   Bin [31m23912[m -> [32m0[m bytes
+ .../esp_memory_utils.c.obj                         |   Bin [31m6360[m -> [32m0[m bytes
+ .../port/esp32s3/chip_info.c.obj                   |   Bin [31m5768[m -> [32m0[m bytes
+ .../port/esp32s3/cpu_region_protect.c.obj          |   Bin [31m5604[m -> [32m0[m bytes
+ .../port/esp32s3/esp_cpu_intr.c.obj                |   Bin [31m7044[m -> [32m0[m bytes
+ .../port/esp32s3/rtc_clk.c.obj                     |   Bin [31m75536[m -> [32m0[m bytes
+ .../port/esp32s3/rtc_clk_init.c.obj                |   Bin [31m17484[m -> [32m0[m bytes
+ .../port/esp32s3/rtc_init.c.obj                    |   Bin [31m74880[m -> [32m0[m bytes
+ .../port/esp32s3/rtc_sleep.c.obj                   |   Bin [31m25660[m -> [32m0[m bytes
+ .../port/esp32s3/rtc_time.c.obj                    |   Bin [31m86976[m -> [32m0[m bytes
+ .../esp-idf/esp_hw_support/cmake_install.cmake     |    49 [31m-[m
+ .../esp-idf/esp_hw_support/libesp_hw_support.a     |   Bin [31m331778[m -> [32m0[m bytes
+ .../esp_hw_support/lowpower/cmake_install.cmake    |    39 [31m-[m
+ .../port/esp32s3/cmake_install.cmake               |    39 [31m-[m
+ .../patches/esp_rom_cache_esp32s2_esp32s3.c.obj    |   Bin [31m17896[m -> [32m0[m bytes
+ .../patches/esp_rom_cache_writeback_esp32s3.S.obj  |   Bin [31m3140[m -> [32m0[m bytes
+ .../__idf_esp_rom.dir/patches/esp_rom_crc.c.obj    |   Bin [31m2196[m -> [32m0[m bytes
+ .../__idf_esp_rom.dir/patches/esp_rom_efuse.c.obj  |   Bin [31m4844[m -> [32m0[m bytes
+ .../patches/esp_rom_longjmp.S.obj                  |   Bin [31m3016[m -> [32m0[m bytes
+ .../patches/esp_rom_spiflash.c.obj                 |   Bin [31m7728[m -> [32m0[m bytes
+ .../__idf_esp_rom.dir/patches/esp_rom_sys.c.obj    |   Bin [31m5696[m -> [32m0[m bytes
+ .../patches/esp_rom_systimer.c.obj                 |   Bin [31m2264[m -> [32m0[m bytes
+ .../__idf_esp_rom.dir/patches/esp_rom_uart.c.obj   |   Bin [31m6632[m -> [32m0[m bytes
+ .../__idf_esp_rom.dir/patches/esp_rom_wdt.c.obj    |   Bin [31m2252[m -> [32m0[m bytes
+ .../bootloader/esp-idf/esp_rom/cmake_install.cmake |    39 [31m-[m
+ build/bootloader/esp-idf/esp_rom/libesp_rom.a      |   Bin [31m57028[m -> [32m0[m bytes
+ .../CMakeFiles/__idf_esp_system.dir/esp_err.c.obj  |   Bin [31m10132[m -> [32m0[m bytes
+ .../esp-idf/esp_system/cmake_install.cmake         |    39 [31m-[m
+ .../bootloader/esp-idf/esp_system/libesp_system.a  |   Bin [31m10334[m -> [32m0[m bytes
+ .../esp-idf/esptool_py/cmake_install.cmake         |    39 [31m-[m
+ .../esp-idf/freertos/cmake_install.cmake           |    39 [31m-[m
+ .../hal/CMakeFiles/__idf_hal.dir/cache_hal.c.obj   |   Bin [31m51796[m -> [32m0[m bytes
+ .../hal/CMakeFiles/__idf_hal.dir/efuse_hal.c.obj   |   Bin [31m41496[m -> [32m0[m bytes
+ .../__idf_hal.dir/esp32s3/efuse_hal.c.obj          |   Bin [31m50428[m -> [32m0[m bytes
+ .../hal/CMakeFiles/__idf_hal.dir/hal_utils.c.obj   |   Bin [31m22440[m -> [32m0[m bytes
+ .../hal/CMakeFiles/__idf_hal.dir/mmu_hal.c.obj     |   Bin [31m34428[m -> [32m0[m bytes
+ .../hal/CMakeFiles/__idf_hal.dir/mpu_hal.c.obj     |   Bin [31m6168[m -> [32m0[m bytes
+ build/bootloader/esp-idf/hal/cmake_install.cmake   |    39 [31m-[m
+ build/bootloader/esp-idf/hal/libhal.a              |   Bin [31m208348[m -> [32m0[m bytes
+ .../esp-idf/log/CMakeFiles/__idf_log.dir/log.c.obj |   Bin [31m30064[m -> [32m0[m bytes
+ .../log/CMakeFiles/__idf_log.dir/log_buffers.c.obj |   Bin [31m21592[m -> [32m0[m bytes
+ .../log/CMakeFiles/__idf_log.dir/log_noos.c.obj    |   Bin [31m9472[m -> [32m0[m bytes
+ build/bootloader/esp-idf/log/cmake_install.cmake   |    39 [31m-[m
+ build/bootloader/esp-idf/log/liblog.a              |   Bin [31m61818[m -> [32m0[m bytes
+ .../__idf_main.dir/bootloader_start.c.obj          |   Bin [31m16496[m -> [32m0[m bytes
+ build/bootloader/esp-idf/main/cmake_install.cmake  |    39 [31m-[m
+ build/bootloader/esp-idf/main/libmain.a            |   Bin [31m16748[m -> [32m0[m bytes
+ .../uECC_verify_antifault.c.obj                    |   Bin [31m206836[m -> [32m0[m bytes
+ .../esp-idf/micro-ecc/cmake_install.cmake          |    39 [31m-[m
+ build/bootloader/esp-idf/micro-ecc/libmicro-ecc.a  |   Bin [31m207488[m -> [32m0[m bytes
+ .../bootloader/esp-idf/newlib/cmake_install.cmake  |    39 [31m-[m
+ .../esp-idf/partition_table/cmake_install.cmake    |    39 [31m-[m
+ .../__idf_soc.dir/dport_access_common.c.obj        |   Bin [31m4460[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/adc_periph.c.obj         |   Bin [31m2820[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/dedic_gpio_periph.c.obj  |   Bin [31m9396[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/gdma_periph.c.obj        |   Bin [31m9244[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/gpio_periph.c.obj        |   Bin [31m3632[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/i2c_periph.c.obj         |   Bin [31m9552[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/i2s_periph.c.obj         |   Bin [31m10028[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/interrupts.c.obj         |   Bin [31m9760[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/lcd_periph.c.obj         |   Bin [31m9660[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/ledc_periph.c.obj        |   Bin [31m3040[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/mcpwm_periph.c.obj       |   Bin [31m10000[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/mpi_periph.c.obj         |   Bin [31m3296[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/pcnt_periph.c.obj        |   Bin [31m9680[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/rmt_periph.c.obj         |   Bin [31m9288[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/rtc_io_periph.c.obj      |   Bin [31m5172[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/sdm_periph.c.obj         |   Bin [31m2644[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/sdmmc_periph.c.obj       |   Bin [31m3776[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/spi_periph.c.obj         |   Bin [31m23436[m -> [32m0[m bytes
+ .../esp32s3/temperature_sensor_periph.c.obj        |   Bin [31m2876[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/timer_periph.c.obj       |   Bin [31m9188[m -> [32m0[m bytes
+ .../esp32s3/touch_sensor_periph.c.obj              |   Bin [31m2412[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/twai_periph.c.obj        |   Bin [31m9328[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/uart_periph.c.obj        |   Bin [31m8136[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/usb_dwc_periph.c.obj     |   Bin [31m10080[m -> [32m0[m bytes
+ .../__idf_soc.dir/esp32s3/usb_periph.c.obj         |   Bin [31m3136[m -> [32m0[m bytes
+ .../soc/CMakeFiles/__idf_soc.dir/lldesc.c.obj      |   Bin [31m8848[m -> [32m0[m bytes
+ build/bootloader/esp-idf/soc/cmake_install.cmake   |    39 [31m-[m
+ build/bootloader/esp-idf/soc/libsoc.a              |   Bin [31m195886[m -> [32m0[m bytes
+ .../__idf_spi_flash.dir/spi_flash_wrap.c.obj       |   Bin [31m23964[m -> [32m0[m bytes
+ .../esp-idf/spi_flash/cmake_install.cmake          |    39 [31m-[m
+ build/bootloader/esp-idf/spi_flash/libspi_flash.a  |   Bin [31m24454[m -> [32m0[m bytes
+ .../xtensa/CMakeFiles/__idf_xtensa.dir/eri.c.obj   |   Bin [31m4464[m -> [32m0[m bytes
+ .../CMakeFiles/__idf_xtensa.dir/xt_trax.c.obj      |   Bin [31m8760[m -> [32m0[m bytes
+ .../bootloader/esp-idf/xtensa/cmake_install.cmake  |    39 [31m-[m
+ build/bootloader/esp-idf/xtensa/libxtensa.a        |   Bin [31m13580[m -> [32m0[m bytes
+ build/bootloader/kconfigs.in                       |    10 [31m-[m
+ build/bootloader/kconfigs_projbuild.in             |     5 [31m-[m
+ build/bootloader/project_description.json          |  1595 [31m-[m
+ build/bootloader/project_elf_src_esp32s3.c         |     0
+ build/build.ninja                                  | 21807 [31m-----------[m
+ build/cmake_install.cmake                          |    54 [31m-[m
+ build/compile_commands.json                        |  4557 [31m---[m
+ build/config.env                                   |    12 [31m-[m
+ build/config/kconfig_menus.json                    | 29422 [31m--------------[m
+ build/config/sdkconfig.cmake                       |  1502 [31m-[m
+ build/config/sdkconfig.h                           |   984 [31m-[m
+ build/config/sdkconfig.json                        |  1307 [31m-[m
+ build/cooling_monitoring_firmware.bin              |   Bin [31m328688[m -> [32m0[m bytes
+ build/cooling_monitoring_firmware.elf              |   Bin [31m4756724[m -> [32m0[m bytes
+ build/cooling_monitoring_firmware.map              | 38812 [31m-------------------[m
+ .../CMakeFiles/__idf_app_trace.dir/app_trace.c.obj |   Bin [31m65968[m -> [32m0[m bytes
+ .../__idf_app_trace.dir/app_trace_util.c.obj       |   Bin [31m18836[m -> [32m0[m bytes
+ .../__idf_app_trace.dir/host_file_io.c.obj         |   Bin [31m2232[m -> [32m0[m bytes
+ .../__idf_app_trace.dir/port/port_uart.c.obj       |   Bin [31m5664[m -> [32m0[m bytes
+ build/esp-idf/app_trace/cmake_install.cmake        |    39 [31m-[m
+ build/esp-idf/app_trace/libapp_trace.a             |   Bin [31m93798[m -> [32m0[m bytes
+ .../__idf_app_update.dir/esp_ota_app_desc.c.obj    |   Bin [31m6380[m -> [32m0[m bytes
+ .../__idf_app_update.dir/esp_ota_ops.c.obj         |   Bin [31m106640[m -> [32m0[m bytes
+ build/esp-idf/app_update/cmake_install.cmake       |    39 [31m-[m
+ build/esp-idf/app_update/libapp_update.a           |   Bin [31m113970[m -> [32m0[m bytes
+ build/esp-idf/bootloader/bootloader-flash_args.in  |     2 [31m-[m
+ build/esp-idf/bootloader/cmake_install.cmake       |    39 [31m-[m
+ .../bootloader_flash/src/bootloader_flash.c.obj    |   Bin [31m117028[m -> [32m0[m bytes
+ .../src/bootloader_flash_config_esp32s3.c.obj      |   Bin [31m38620[m -> [32m0[m bytes
+ .../bootloader_flash/src/flash_qio_mode.c.obj      |   Bin [31m32320[m -> [32m0[m bytes
+ .../src/bootloader_clock_init.c.obj                |   Bin [31m8904[m -> [32m0[m bytes
+ .../src/bootloader_common.c.obj                    |   Bin [31m42512[m -> [32m0[m bytes
+ .../src/bootloader_common_loader.c.obj             |   Bin [31m26580[m -> [32m0[m bytes
+ .../src/bootloader_efuse.c.obj                     |   Bin [31m36124[m -> [32m0[m bytes
+ .../src/bootloader_mem.c.obj                       |   Bin [31m3836[m -> [32m0[m bytes
+ .../src/bootloader_random.c.obj                    |   Bin [31m4164[m -> [32m0[m bytes
+ .../src/bootloader_random_esp32s3.c.obj            |   Bin [31m10012[m -> [32m0[m bytes
+ .../src/bootloader_utility.c.obj                   |   Bin [31m90280[m -> [32m0[m bytes
+ .../src/esp32s3/secure_boot_secure_features.c.obj  |   Bin [31m9592[m -> [32m0[m bytes
+ .../src/esp_image_format.c.obj                     |   Bin [31m76268[m -> [32m0[m bytes
+ .../src/flash_encrypt.c.obj                        |   Bin [31m33796[m -> [32m0[m bytes
+ .../src/flash_partitions.c.obj                     |   Bin [31m15008[m -> [32m0[m bytes
+ .../src/idf/bootloader_sha.c.obj                   |   Bin [31m11964[m -> [32m0[m bytes
+ .../src/secure_boot.c.obj                          |   Bin [31m55144[m -> [32m0[m bytes
+ .../esp-idf/bootloader_support/cmake_install.cmake |    39 [31m-[m
+ .../bootloader_support/libbootloader_support.a     |   Bin [31m616776[m -> [32m0[m bytes
+ build/esp-idf/bt/cmake_install.cmake               |    39 [31m-[m
+ build/esp-idf/cmake_install.cmake                  |   554 [31m-[m
+ .../__idf_cmock.dir/CMock/src/cmock.c.obj          |   Bin [31m22904[m -> [32m0[m bytes
+ build/esp-idf/cmock/cmake_install.cmake            |    39 [31m-[m
+ build/esp-idf/cmock/libcmock.a                     |   Bin [31m23584[m -> [32m0[m bytes
+ .../__idf_console.dir/argtable3/arg_cmd.c.obj      |   Bin [31m45580[m -> [32m0[m bytes
+ .../__idf_console.dir/argtable3/arg_date.c.obj     |   Bin [31m58000[m -> [32m0[m bytes
+ .../__idf_console.dir/argtable3/arg_dbl.c.obj      |   Bin [31m18448[m -> [32m0[m bytes
+ .../__idf_console.dir/argtable3/arg_dstr.c.obj     |   Bin [31m22756[m -> [32m0[m bytes
+ .../__idf_console.dir/argtable3/arg_end.c.obj      |   Bin [31m19692[m -> [32m0[m bytes
+ .../__idf_console.dir/argtable3/arg_file.c.obj     |   Bin [31m24096[m -> [32m0[m bytes
+ .../argtable3/arg_hashtable.c.obj                  |   Bin [31m40060[m -> [32m0[m bytes
+ .../__idf_console.dir/argtable3/arg_int.c.obj      |   Bin [31m28724[m -> [32m0[m bytes
+ .../__idf_console.dir/argtable3/arg_lit.c.obj      |   Bin [31m15176[m -> [32m0[m bytes
+ .../__idf_console.dir/argtable3/arg_rem.c.obj      |   Bin [31m5964[m -> [32m0[m bytes
+ .../__idf_console.dir/argtable3/arg_rex.c.obj      |   Bin [31m103412[m -> [32m0[m bytes
+ .../__idf_console.dir/argtable3/arg_str.c.obj      |   Bin [31m17680[m -> [32m0[m bytes
+ .../__idf_console.dir/argtable3/arg_utils.c.obj    |   Bin [31m25472[m -> [32m0[m bytes
+ .../__idf_console.dir/argtable3/argtable3.c.obj    |   Bin [31m97900[m -> [32m0[m bytes
+ .../CMakeFiles/__idf_console.dir/commands.c.obj    |   Bin [31m43448[m -> [32m0[m bytes
+ .../__idf_console.dir/esp_console_common.c.obj     |   Bin [31m29776[m -> [32m0[m bytes
+ .../__idf_console.dir/esp_console_repl_chip.c.obj  |   Bin [31m24940[m -> [32m0[m bytes
+ .../__idf_console.dir/linenoise/linenoise.c.obj    |   Bin [31m126660[m -> [32m0[m bytes
+ .../CMakeFiles/__idf_console.dir/split_argv.c.obj  |   Bin [31m10608[m -> [32m0[m bytes
+ build/esp-idf/console/cmake_install.cmake          |    39 [31m-[m
+ build/esp-idf/console/libconsole.a                 |   Bin [31m762878[m -> [32m0[m bytes
+ .../__idf_cxx.dir/cxx_exception_stubs.cpp.obj      |   Bin [31m38284[m -> [32m0[m bytes
+ .../CMakeFiles/__idf_cxx.dir/cxx_guards.cpp.obj    |   Bin [31m32488[m -> [32m0[m bytes
+ .../cxx/CMakeFiles/__idf_cxx.dir/cxx_init.cpp.obj  |   Bin [31m8128[m -> [32m0[m bytes
+ build/esp-idf/cxx/cmake_install.cmake              |    39 [31m-[m
+ build/esp-idf/cxx/libcxx.a                         |   Bin [31m80554[m -> [32m0[m bytes
+ .../deprecated/adc_dma_legacy.c.obj                |   Bin [31m117952[m -> [32m0[m bytes
+ .../__idf_driver.dir/deprecated/adc_legacy.c.obj   |   Bin [31m124108[m -> [32m0[m bytes
+ .../__idf_driver.dir/deprecated/i2s_legacy.c.obj   |   Bin [31m248880[m -> [32m0[m bytes
+ .../__idf_driver.dir/deprecated/mcpwm_legacy.c.obj |   Bin [31m418868[m -> [32m0[m bytes
+ .../__idf_driver.dir/deprecated/pcnt_legacy.c.obj  |   Bin [31m244184[m -> [32m0[m bytes
+ .../__idf_driver.dir/deprecated/rmt_legacy.c.obj   |   Bin [31m477468[m -> [32m0[m bytes
+ .../deprecated/rtc_temperature_legacy.c.obj        |   Bin [31m54880[m -> [32m0[m bytes
+ .../deprecated/sigma_delta_legacy.c.obj            |   Bin [31m45304[m -> [32m0[m bytes
+ .../__idf_driver.dir/deprecated/timer_legacy.c.obj |   Bin [31m240588[m -> [32m0[m bytes
+ .../CMakeFiles/__idf_driver.dir/i2c/i2c.c.obj      |   Bin [31m313780[m -> [32m0[m bytes
+ .../touch_sensor/esp32s3/touch_sensor.c.obj        |   Bin [31m244708[m -> [32m0[m bytes
+ .../touch_sensor/touch_sensor_common.c.obj         |   Bin [31m99540[m -> [32m0[m bytes
+ .../CMakeFiles/__idf_driver.dir/twai/twai.c.obj    |   Bin [31m181640[m -> [32m0[m bytes
+ build/esp-idf/driver/cmake_install.cmake           |    39 [31m-[m
+ build/esp-idf/driver/libdriver.a                   |   Bin [31m2821664[m -> [32m0[m bytes
+ .../__idf_efuse.dir/esp32s3/esp_efuse_fields.c.obj |   Bin [31m10784[m -> [32m0[m bytes
+ .../esp32s3/esp_efuse_rtc_calib.c.obj              |   Bin [31m27456[m -> [32m0[m bytes
+ .../__idf_efuse.dir/esp32s3/esp_efuse_table.c.obj  |   Bin [31m117876[m -> [32m0[m bytes
+ .../esp32s3/esp_efuse_utility.c.obj                |   Bin [31m29096[m -> [32m0[m bytes
+ .../keys/with_key_purposes/esp_efuse_api_key.c.obj |   Bin [31m67484[m -> [32m0[m bytes
+ .../__idf_efuse.dir/src/esp_efuse_api.c.obj        |   Bin [31m51168[m -> [32m0[m bytes
+ .../__idf_efuse.dir/src/esp_efuse_fields.c.obj     |   Bin [31m18804[m -> [32m0[m bytes
+ .../__idf_efuse.dir/src/esp_efuse_startup.c.obj    |   Bin [31m13604[m -> [32m0[m bytes
+ .../__idf_efuse.dir/src/esp_efuse_utility.c.obj    |   Bin [31m64292[m -> [32m0[m bytes
+ build/esp-idf/efuse/cmake_install.cmake            |    39 [31m-[m
+ build/esp-idf/efuse/libefuse.a                     |   Bin [31m411780[m -> [32m0[m bytes
+ .../esp-tls-crypto/esp_tls_crypto.c.obj            |   Bin [31m9908[m -> [32m0[m bytes
+ .../CMakeFiles/__idf_esp-tls.dir/esp_tls.c.obj     |   Bin [31m132528[m -> [32m0[m bytes
+ .../__idf_esp-tls.dir/esp_tls_error_capture.c.obj  |   Bin [31m11872[m -> [32m0[m bytes
+ .../__idf_esp-tls.dir/esp_tls_mbedtls.c.obj        |   Bin [31m125628[m -> [32m0[m bytes
+ .../__idf_esp-tls.dir/esp_tls_platform_port.c.obj  |   Bin [31m4252[m -> [32m0[m bytes
+ build/esp-idf/esp-tls/cmake_install.cmake          |    39 [31m-[m
+ build/esp-idf/esp-tls/libesp-tls.a                 |   Bin [31m286312[m -> [32m0[m bytes
+ .../CMakeFiles/__idf_esp_adc.dir/adc_cali.c.obj    |   Bin [31m10512[m -> [32m0[m bytes
+ .../__idf_esp_adc.dir/adc_cali_curve_fitting.c.obj |   Bin [31m32468[m -> [32m0[m bytes
+ .../CMakeFiles/__idf_esp_adc.dir/adc_common.c.obj  |   Bin [31m20808[m -> [32m0[m bytes
+ .../__idf_esp_adc.dir/adc_continuous.c.obj         |   Bin [31m138108[m -> [32m0[m bytes
+ .../CMakeFiles/__idf_esp_adc.dir/adc_filter.c.obj  |   Bin [31m55984[m -> [32m0[m bytes
+ .../CMakeFiles/__idf_esp_adc.dir/adc_monitor.c.obj |   Bin [31m79472[m -> [32m0[m bytes
+ .../CMakeFiles/__idf_esp_adc.dir/adc_oneshot.c.obj |   Bin [31m76660[m -> [32m0[m bytes
+ .../deprecated/esp32s3/esp_adc_cal_legacy.c.obj    |   Bin [31m25112[m -> [32m0[m bytes
+ .../deprecated/esp_adc_cal_common_legacy.c.obj     |   Bin [31m18696[m -> [32m0[m bytes
+ .../esp32s3/curve_fitting_coefficients.c.obj       |   Bin [31m9068[m -> [32m0[m bytes
+ .../__idf_esp_adc.dir/gdma/adc_dma.c.obj           |   Bin [31m22580[m -> [32m0[m bytes
+ build/esp-idf/esp_adc/cmake_install.cmake          |    39 [31m-[m
+ build/esp-idf/esp_adc/libesp_adc.a                 |   Bin [31m491814[m -> [32m0[m bytes
+ .../__idf_esp_app_format.dir/esp_app_desc.c.obj    |   Bin [31m15840[m -> [32m0[m bytes
+ build/esp-idf/esp_app_format/cmake_install.cmake   |    39 [31m-[m
+ build/esp-idf/esp_app_format/libesp_app_format.a   |   Bin [31m16148[m -> [32m0[m bytes
+ .../esp_bootloader_desc.c.obj                      |   Bin [31m4824[m -> [32m0[m bytes
+ .../esp_bootloader_format/cmake_install.cmake      |    39 [31m-[m
+ .../libesp_bootloader_format.a                     |   Bin [31m5104[m -> [32m0[m bytes
+ .../esp32s3/esp_coex_adapter.c.obj                 |   Bin [31m34588[m -> [32m0[m bytes
+ build/esp-idf/esp_coex/cmake_install.cmake         |    39 [31m-[m
+ build/esp-idf/esp_coex/libesp_coex.a               |   Bin [31m35460[m -> [32m0[m bytes
+ .../__idf_esp_common.dir/src/esp_err_to_name.c.obj |   Bin [31m20736[m -> [32m0[m bytes
+ build/esp-idf/esp_common/cmake_install.cmake       |    39 [31m-[m
+ build/esp-idf/esp_common/libesp_common.a           |   Bin [31m20994[m -> [32m0[m bytes
+ .../esp_driver_ana_cmpr/cmake_install.cmake        |    39 [31m-[m
+ .../__idf_esp_driver_cam.dir/dvp_share_ctrl.c.obj  |   Bin [31m7776[m -> [32m0[m bytes
+ .../__idf_esp_driver_cam.dir/esp_cam_ctlr.c.obj    |   Bin [31m31288[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_cam/cmake_install.cmake   |    39 [31m-[m
+ build/esp-idf/esp_driver_cam/libesp_driver_cam.a   |   Bin [31m39708[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_dac/cmake_install.cmake   |    39 [31m-[m
+ .../__idf_esp_driver_gpio.dir/src/dedic_gpio.c.obj |   Bin [31m112976[m -> [32m0[m bytes
+ .../__idf_esp_driver_gpio.dir/src/gpio.c.obj       |   Bin [31m224268[m -> [32m0[m bytes
+ .../src/gpio_glitch_filter_ops.c.obj               |   Bin [31m12952[m -> [32m0[m bytes
+ .../src/gpio_pin_glitch_filter.c.obj               |   Bin [31m31244[m -> [32m0[m bytes
+ .../__idf_esp_driver_gpio.dir/src/rtc_io.c.obj     |   Bin [31m115268[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_gpio/cmake_install.cmake  |    39 [31m-[m
+ build/esp-idf/esp_driver_gpio/libesp_driver_gpio.a |   Bin [31m499004[m -> [32m0[m bytes
+ .../__idf_esp_driver_gptimer.dir/src/gptimer.c.obj |   Bin [31m185920[m -> [32m0[m bytes
+ .../src/gptimer_priv.c.obj                         |   Bin [31m11932[m -> [32m0[m bytes
+ .../esp-idf/esp_driver_gptimer/cmake_install.cmake |    39 [31m-[m
+ .../esp_driver_gptimer/libesp_driver_gptimer.a     |   Bin [31m198470[m -> [32m0[m bytes
+ .../__idf_esp_driver_i2c.dir/i2c_common.c.obj      |   Bin [31m117620[m -> [32m0[m bytes
+ .../__idf_esp_driver_i2c.dir/i2c_master.c.obj      |   Bin [31m282268[m -> [32m0[m bytes
+ .../__idf_esp_driver_i2c.dir/i2c_slave.c.obj       |   Bin [31m113528[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_i2c/cmake_install.cmake   |    39 [31m-[m
+ build/esp-idf/esp_driver_i2c/libesp_driver_i2c.a   |   Bin [31m514354[m -> [32m0[m bytes
+ .../__idf_esp_driver_i2s.dir/i2s_common.c.obj      |   Bin [31m172196[m -> [32m0[m bytes
+ .../__idf_esp_driver_i2s.dir/i2s_pdm.c.obj         |   Bin [31m148768[m -> [32m0[m bytes
+ .../__idf_esp_driver_i2s.dir/i2s_platform.c.obj    |   Bin [31m88980[m -> [32m0[m bytes
+ .../__idf_esp_driver_i2s.dir/i2s_std.c.obj         |   Bin [31m93560[m -> [32m0[m bytes
+ .../__idf_esp_driver_i2s.dir/i2s_tdm.c.obj         |   Bin [31m94804[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_i2s/cmake_install.cmake   |    39 [31m-[m
+ build/esp-idf/esp_driver_i2s/libesp_driver_i2s.a   |   Bin [31m599926[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_isp/cmake_install.cmake   |    39 [31m-[m
+ build/esp-idf/esp_driver_jpeg/cmake_install.cmake  |    39 [31m-[m
+ .../__idf_esp_driver_ledc.dir/src/ledc.c.obj       |   Bin [31m330688[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_ledc/cmake_install.cmake  |    39 [31m-[m
+ build/esp-idf/esp_driver_ledc/libesp_driver_ledc.a |   Bin [31m331496[m -> [32m0[m bytes
+ .../__idf_esp_driver_mcpwm.dir/src/mcpwm_cap.c.obj |   Bin [31m151576[m -> [32m0[m bytes
+ .../src/mcpwm_cmpr.c.obj                           |   Bin [31m84472[m -> [32m0[m bytes
+ .../__idf_esp_driver_mcpwm.dir/src/mcpwm_com.c.obj |   Bin [31m117208[m -> [32m0[m bytes
+ .../src/mcpwm_fault.c.obj                          |   Bin [31m95284[m -> [32m0[m bytes
+ .../__idf_esp_driver_mcpwm.dir/src/mcpwm_gen.c.obj |   Bin [31m143212[m -> [32m0[m bytes
+ .../src/mcpwm_oper.c.obj                           |   Bin [31m129204[m -> [32m0[m bytes
+ .../src/mcpwm_sync.c.obj                           |   Bin [31m95216[m -> [32m0[m bytes
+ .../src/mcpwm_timer.c.obj                          |   Bin [31m144516[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_mcpwm/cmake_install.cmake |    39 [31m-[m
+ .../esp-idf/esp_driver_mcpwm/libesp_driver_mcpwm.a |   Bin [31m963432[m -> [32m0[m bytes
+ .../esp-idf/esp_driver_parlio/cmake_install.cmake  |    39 [31m-[m
+ .../__idf_esp_driver_pcnt.dir/src/pulse_cnt.c.obj  |   Bin [31m218152[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_pcnt/cmake_install.cmake  |    39 [31m-[m
+ build/esp-idf/esp_driver_pcnt/libesp_driver_pcnt.a |   Bin [31m218696[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_ppa/cmake_install.cmake   |    39 [31m-[m
+ .../__idf_esp_driver_rmt.dir/src/rmt_common.c.obj  |   Bin [31m113536[m -> [32m0[m bytes
+ .../__idf_esp_driver_rmt.dir/src/rmt_encoder.c.obj |   Bin [31m65268[m -> [32m0[m bytes
+ .../__idf_esp_driver_rmt.dir/src/rmt_rx.c.obj      |   Bin [31m177664[m -> [32m0[m bytes
+ .../__idf_esp_driver_rmt.dir/src/rmt_tx.c.obj      |   Bin [31m226092[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_rmt/cmake_install.cmake   |    39 [31m-[m
+ build/esp-idf/esp_driver_rmt/libesp_driver_rmt.a   |   Bin [31m583636[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_sdio/cmake_install.cmake  |    39 [31m-[m
+ .../__idf_esp_driver_sdm.dir/src/sdm.c.obj         |   Bin [31m61188[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_sdm/cmake_install.cmake   |    39 [31m-[m
+ build/esp-idf/esp_driver_sdm/libesp_driver_sdm.a   |   Bin [31m61466[m -> [32m0[m bytes
+ .../src/sdmmc_host.c.obj                           |   Bin [31m198240[m -> [32m0[m bytes
+ .../src/sdmmc_transaction.c.obj                    |   Bin [31m62640[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_sdmmc/cmake_install.cmake |    39 [31m-[m
+ .../esp-idf/esp_driver_sdmmc/libesp_driver_sdmmc.a |   Bin [31m261938[m -> [32m0[m bytes
+ .../__idf_esp_driver_sdspi.dir/src/sdspi_crc.c.obj |   Bin [31m7156[m -> [32m0[m bytes
+ .../src/sdspi_host.c.obj                           |   Bin [31m92032[m -> [32m0[m bytes
+ .../src/sdspi_transaction.c.obj                    |   Bin [31m25664[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_sdspi/cmake_install.cmake |    39 [31m-[m
+ .../esp-idf/esp_driver_sdspi/libesp_driver_sdspi.a |   Bin [31m125554[m -> [32m0[m bytes
+ .../src/gpspi/spi_common.c.obj                     |   Bin [31m135276[m -> [32m0[m bytes
+ .../src/gpspi/spi_dma.c.obj                        |   Bin [31m2224[m -> [32m0[m bytes
+ .../src/gpspi/spi_master.c.obj                     |   Bin [31m228048[m -> [32m0[m bytes
+ .../src/gpspi/spi_slave.c.obj                      |   Bin [31m104560[m -> [32m0[m bytes
+ .../src/gpspi/spi_slave_hd.c.obj                   |   Bin [31m111220[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_spi/cmake_install.cmake   |    39 [31m-[m
+ build/esp-idf/esp_driver_spi/libesp_driver_spi.a   |   Bin [31m583282[m -> [32m0[m bytes
+ .../esp_driver_touch_sens/cmake_install.cmake      |    39 [31m-[m
+ .../src/temperature_sensor.c.obj                   |   Bin [31m52272[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_tsens/cmake_install.cmake |    39 [31m-[m
+ .../esp-idf/esp_driver_tsens/libesp_driver_tsens.a |   Bin [31m52650[m -> [32m0[m bytes
+ .../__idf_esp_driver_uart.dir/src/uart.c.obj       |   Bin [31m395524[m -> [32m0[m bytes
+ .../__idf_esp_driver_uart.dir/src/uart_vfs.c.obj   |   Bin [31m128548[m -> [32m0[m bytes
+ build/esp-idf/esp_driver_uart/cmake_install.cmake  |    39 [31m-[m
+ build/esp-idf/esp_driver_uart/libesp_driver_uart.a |   Bin [31m526218[m -> [32m0[m bytes
+ .../src/usb_serial_jtag.c.obj                      |   Bin [31m133216[m -> [32m0[m bytes
+ .../src/usb_serial_jtag_connection_monitor.c.obj   |   Bin [31m19004[m -> [32m0[m bytes
+ .../src/usb_serial_jtag_vfs.c.obj                  |   Bin [31m65836[m -> [32m0[m bytes
+ .../esp_driver_usb_serial_jtag/cmake_install.cmake |    39 [31m-[m
+ .../libesp_driver_usb_serial_jtag.a                |   Bin [31m219176[m -> [32m0[m bytes
+ .../CMakeFiles/__idf_esp_eth.dir/src/esp_eth.c.obj |   Bin [31m143112[m -> [32m0[m bytes
+ .../__idf_esp_eth.dir/src/esp_eth_netif_glue.c.obj |   Bin [31m35748[m -> [32m0[m bytes
+ .../src/phy/esp_eth_phy_802_3.c.obj                |   Bin [31m139460[m -> [32m0[m bytes
+ build/esp-idf/esp_eth/cmake_install.cmake          |    39 [31m-[m
+ build/esp-idf/esp_eth/libesp_eth.a                 |   Bin
