@@ -43,6 +43,12 @@ flowchart TD
 
 The uploader never skips an unsupported or failed record and never commits the cursor after publish alone. The cursor moves only when the ACK contains `status: "ok"` and the expected `record_id`.
 
+## Live health visibility
+
+The dashboard exposes the same delivery state reported by the device: Wi-Fi connection, MQTT readiness, journal size, pending bytes, cursor offset, last acknowledged record, disconnect count, and cloud errors.
+
+![Live device health](assets/screenshots/dashboard-health.png)
+
 ## Connectivity fault testing
 
 `CONFIG_FIRMWARE_WIFI_FAULT_TEST` enables a one-shot Wokwi test: 30 seconds online, 60 seconds forced offline, then restored connectivity. Alarm generation and local storage continue during the outage so replay can be verified.
