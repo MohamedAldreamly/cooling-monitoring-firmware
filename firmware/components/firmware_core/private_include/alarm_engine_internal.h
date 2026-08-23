@@ -15,6 +15,8 @@ typedef struct {
     uint64_t pending_since_ms;
     uint64_t returned_since_ms;
 
+    alarm_severity_t current_severity;
+
     bool condition_active;
     bool quality_degraded;
 } alarm_runtime_state_t;

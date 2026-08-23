@@ -32,6 +32,7 @@ typedef struct {
     float hysteresis;
 
     uint32_t activation_delay_ms;
+    uint32_t critical_delay_ms;
     uint32_t return_delay_ms;
 
     alarm_severity_t severity;

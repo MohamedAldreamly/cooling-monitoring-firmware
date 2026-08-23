@@ -27,116 +27,59 @@ static bool s_stop_requested = false;
 
 static uint64_t s_next_alarm_instance_id = 1U;
 
+#define ESCALATING_RULE(                         \
+    code_value, signal_value, operator_value,    \
+    threshold_value, hysteresis_value            \
+) {                                              \
+    .alarm_code = code_value,                    \
+    .source_signal = signal_value,               \
+    .comparison_operator = operator_value,       \
+    .threshold = threshold_value,                \
+    .hysteresis = hysteresis_value,              \
+    .activation_delay_ms = 3000U,                \
+    .critical_delay_ms = 7000U,                  \
+    .return_delay_ms = 3000U,                    \
+    .severity = ALARM_SEVERITY_HIGH,             \
+    .latched = false,                            \
+    .enabled = true,                             \
+}
+
 static const alarm_rule_t s_alarm_rules[] = {
-    {
-        .alarm_code = "HIGH_ROOM_TEMP_01",
-        .source_signal = SIGNAL_ID_ROOM_TEMP_01,
-        .comparison_operator = ALARM_OPERATOR_GREATER_THAN,
-        .threshold = -12.0f,
-        .hysteresis = 2.0f,
-        .activation_delay_ms = 10000U,
-        .return_delay_ms = 5000U,
-        .severity = ALARM_SEVERITY_HIGH,
-        .latched = false,
-        .enabled = true,
-    },
-    {
-        .alarm_code = "HIGH_ROOM_TEMP_02",
-        .source_signal = SIGNAL_ID_ROOM_TEMP_02,
-        .comparison_operator = ALARM_OPERATOR_GREATER_THAN,
-        .threshold = -12.0f,
-        .hysteresis = 2.0f,
-        .activation_delay_ms = 10000U,
-        .return_delay_ms = 5000U,
-        .severity = ALARM_SEVERITY_HIGH,
-        .latched = false,
-        .enabled = true,
-    },
-    {
-        .alarm_code = "HIGH_ROOM_TEMP_03",
-        .source_signal = SIGNAL_ID_ROOM_TEMP_03,
-        .comparison_operator = ALARM_OPERATOR_GREATER_THAN,
-        .threshold = -12.0f,
-        .hysteresis = 2.0f,
-        .activation_delay_ms = 10000U,
-        .return_delay_ms = 5000U,
-        .severity = ALARM_SEVERITY_HIGH,
-        .latched = false,
-        .enabled = true,
-    },
-    {
-        .alarm_code = "HIGH_ROOM_TEMP_04",
-        .source_signal = SIGNAL_ID_ROOM_TEMP_04,
-        .comparison_operator = ALARM_OPERATOR_GREATER_THAN,
-        .threshold = -12.0f,
-        .hysteresis = 2.0f,
-        .activation_delay_ms = 10000U,
-        .return_delay_ms = 5000U,
-        .severity = ALARM_SEVERITY_HIGH,
-        .latched = false,
-        .enabled = true,
-    },
-    {
-        .alarm_code = "DOOR_OPEN",
-        .source_signal = SIGNAL_ID_DOOR_SAFE,
-        .comparison_operator = ALARM_OPERATOR_BOOL_TRUE,
-        .threshold = 0.0f,
-        .hysteresis = 0.0f,
-        .activation_delay_ms = 5000U,
-        .return_delay_ms = 2000U,
-        .severity = ALARM_SEVERITY_WARNING,
-        .latched = false,
-        .enabled = true,
-    },
-    {
-        .alarm_code = "WATER_LEAK",
-        .source_signal = SIGNAL_ID_LEAK_ALARM,
-        .comparison_operator = ALARM_OPERATOR_BOOL_TRUE,
-        .threshold = 0.0f,
-        .hysteresis = 0.0f,
-        .activation_delay_ms = 1000U,
-        .return_delay_ms = 3000U,
-        .severity = ALARM_SEVERITY_CRITICAL,
-        .latched = false,
-        .enabled = true,
-    },
-    {
-        .alarm_code = "COMPRESSOR_TRIP",
-        .source_signal = SIGNAL_ID_COMPRESSOR_TRIP,
-        .comparison_operator = ALARM_OPERATOR_BOOL_TRUE,
-        .threshold = 0.0f,
-        .hysteresis = 0.0f,
-        .activation_delay_ms = 1000U,
-        .return_delay_ms = 3000U,
-        .severity = ALARM_SEVERITY_CRITICAL,
-        .latched = false,
-        .enabled = true,
-    },
-    {
-        .alarm_code = "POWER_FAILURE",
-        .source_signal = SIGNAL_ID_POWER_FAILURE,
-        .comparison_operator = ALARM_OPERATOR_BOOL_TRUE,
-        .threshold = 0.0f,
-        .hysteresis = 0.0f,
-        .activation_delay_ms = 1000U,
-        .return_delay_ms = 3000U,
-        .severity = ALARM_SEVERITY_CRITICAL,
-        .latched = false,
-        .enabled = true,
-    },
-    {
-        .alarm_code = "LOW_BATTERY_VOLTAGE",
-        .source_signal = SIGNAL_ID_BATTERY_VOLTAGE,
-        .comparison_operator = ALARM_OPERATOR_LESS_THAN,
-        .threshold = 23.5f,
-        .hysteresis = 0.8f,
-        .activation_delay_ms = 5000U,
-        .return_delay_ms = 5000U,
-        .severity = ALARM_SEVERITY_HIGH,
-        .latched = false,
-        .enabled = true,
-    },
+    ESCALATING_RULE("HIGH_ROOM_TEMP_01", SIGNAL_ID_ROOM_TEMP_01,
+        ALARM_OPERATOR_GREATER_THAN, -14.0f, 2.0f),
+    ESCALATING_RULE("HIGH_ROOM_TEMP_02", SIGNAL_ID_ROOM_TEMP_02,
+        ALARM_OPERATOR_GREATER_THAN, -14.0f, 2.0f),
+    ESCALATING_RULE("HIGH_ROOM_TEMP_03", SIGNAL_ID_ROOM_TEMP_03,
+        ALARM_OPERATOR_GREATER_THAN, -14.0f, 2.0f),
+    ESCALATING_RULE("HIGH_ROOM_TEMP_04", SIGNAL_ID_ROOM_TEMP_04,
+        ALARM_OPERATOR_GREATER_THAN, -14.0f, 2.0f),
+    ESCALATING_RULE("HIGH_AIR_TEMP_01", SIGNAL_ID_AIR_TEMP_01,
+        ALARM_OPERATOR_GREATER_THAN, -14.0f, 2.0f),
+    ESCALATING_RULE("HIGH_AIR_HUMIDITY", SIGNAL_ID_AIR_RH_01,
+        ALARM_OPERATOR_GREATER_THAN, 80.0f, 4.0f),
+    ESCALATING_RULE("DOOR_SAFE_OPEN", SIGNAL_ID_DOOR_SAFE,
+        ALARM_OPERATOR_BOOL_TRUE, 0.0f, 0.0f),
+    ESCALATING_RULE("DOOR_AUX_OPEN", SIGNAL_ID_DOOR_AUX,
+        ALARM_OPERATOR_BOOL_TRUE, 0.0f, 0.0f),
+    ESCALATING_RULE("WATER_LEAK", SIGNAL_ID_LEAK_ALARM,
+        ALARM_OPERATOR_BOOL_TRUE, 0.0f, 0.0f),
+    ESCALATING_RULE("LEAK_CABLE_FAULT", SIGNAL_ID_LEAK_CABLE_FAULT,
+        ALARM_OPERATOR_BOOL_TRUE, 0.0f, 0.0f),
+    ESCALATING_RULE("COMPRESSOR_NOT_RUNNING", SIGNAL_ID_COMPRESSOR_RUN,
+        ALARM_OPERATOR_BOOL_FALSE, 0.0f, 0.0f),
+    ESCALATING_RULE("COMPRESSOR_TRIP", SIGNAL_ID_COMPRESSOR_TRIP,
+        ALARM_OPERATOR_BOOL_TRUE, 0.0f, 0.0f),
+    ESCALATING_RULE("EVAP_FAN_NOT_RUNNING", SIGNAL_ID_EVAP_FAN_RUN,
+        ALARM_OPERATOR_BOOL_FALSE, 0.0f, 0.0f),
+    ESCALATING_RULE("POWER_FAILURE", SIGNAL_ID_POWER_FAILURE,
+        ALARM_OPERATOR_BOOL_TRUE, 0.0f, 0.0f),
+    ESCALATING_RULE("HIGH_COMPRESSOR_CURRENT", SIGNAL_ID_COMPRESSOR_CURRENT,
+        ALARM_OPERATOR_GREATER_THAN, 30.0f, 4.0f),
+    ESCALATING_RULE("LOW_BATTERY_VOLTAGE", SIGNAL_ID_BATTERY_VOLTAGE,
+        ALARM_OPERATOR_LESS_THAN, 24.0f, 0.8f),
 };
+
+#undef ESCALATING_RULE
 
 static const size_t s_alarm_rule_count =
     sizeof(s_alarm_rules) /
@@ -327,7 +270,7 @@ static esp_err_t alarm_publish_transition(
         rule->source_signal;
 
     event.severity =
-        rule->severity;
+        runtime->current_severity;
 
     event.previous_state =
         previous_state;
@@ -383,8 +326,9 @@ static esp_err_t alarm_publish_transition(
 
     ESP_LOGI(
         TAG,
-        "Alarm transition: code=%s previous=%d current=%d transition=%d instance=%llu sequence=%lu",
+        "Alarm transition: code=%s severity=%d previous=%d current=%d transition=%d instance=%llu sequence=%lu",
         rule->alarm_code,
+        (int)runtime->current_severity,
         (int)previous_state,
         (int)current_state,
         (int)transition,
@@ -464,6 +408,9 @@ static void alarm_update_runtime_state(
                 runtime->transition_sequence =
                     0U;
 
+                runtime->current_severity =
+                    ALARM_SEVERITY_WARNING;
+
                 alarm_publish_transition(
                     rule,
                     runtime,
@@ -491,6 +438,9 @@ static void alarm_update_runtime_state(
                 runtime->transition_sequence =
                     0U;
 
+                runtime->current_severity =
+                    ALARM_SEVERITY_INFO;
+
                 break;
             }
 
@@ -500,6 +450,9 @@ static void alarm_update_runtime_state(
 
                 runtime->state =
                     ALARM_STATE_ACTIVE;
+
+                runtime->current_severity =
+                    rule->severity;
 
                 alarm_publish_transition(
                     rule,
@@ -532,6 +485,26 @@ static void alarm_update_runtime_state(
                     now_ms,
                     observed_at_ms
                 );
+
+            } else if (
+                runtime->current_severity !=
+                    ALARM_SEVERITY_CRITICAL &&
+                (now_ms - runtime->pending_since_ms) >=
+                    rule->critical_delay_ms
+            ) {
+                runtime->current_severity =
+                    ALARM_SEVERITY_CRITICAL;
+
+                alarm_publish_transition(
+                    rule,
+                    runtime,
+                    ALARM_STATE_ACTIVE,
+                    ALARM_STATE_ACTIVE,
+                    ALARM_TRANSITION_ACTIVATED,
+                    value,
+                    now_ms,
+                    observed_at_ms
+                );
             }
             break;
 
@@ -542,6 +515,12 @@ static void alarm_update_runtime_state(
 
                 runtime->returned_since_ms =
                     0U;
+
+                runtime->pending_since_ms =
+                    now_ms;
+
+                runtime->current_severity =
+                    rule->severity;
 
                 alarm_publish_transition(
                     rule,
@@ -586,6 +565,9 @@ static void alarm_update_runtime_state(
 
                 runtime->returned_since_ms =
                     0U;
+
+                runtime->current_severity =
+                    ALARM_SEVERITY_INFO;
             }
             break;
 
@@ -608,6 +590,8 @@ static void alarm_update_runtime_state(
         default:
             runtime->state =
                 ALARM_STATE_NORMAL;
+            runtime->current_severity =
+                ALARM_SEVERITY_INFO;
             break;
     }
 }

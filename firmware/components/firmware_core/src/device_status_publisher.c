@@ -15,9 +15,27 @@ static const char *TAG = "DEVICE_STATUS";
 #define DEVICE_STATUS_TASK_STACK_SIZE    4096U
 #define DEVICE_STATUS_TASK_PRIORITY      4U
 
+/*
+ * MQTT might not be ready when this task starts. Retry quickly so the first
+ * online heartbeat is published shortly after the cloud connection succeeds.
+ */
+#define DEVICE_STATUS_OFFLINE_RETRY_MS   1000U
+
 static TaskHandle_t s_task_handle = NULL;
 static device_status_publisher_status_t s_status;
 static bool s_stop_requested = false;
+
+static void device_status_publisher_wait(
+    uint32_t wait_ms
+)
+{
+    if (!s_stop_requested) {
+        (void)ulTaskNotifyTake(
+            pdTRUE,
+            pdMS_TO_TICKS(wait_ms)
+        );
+    }
+}
 
 static void device_status_publisher_task(void *argument)
 {
@@ -32,26 +50,24 @@ static void device_status_publisher_task(void *argument)
         CLOUD_TOPIC_STATUS
     );
 
+    /*
+     * Do not wait for CLOUD_STATUS_INTERVAL_MS before the first attempt.
+     * If MQTT is not ready yet, retry once per second. As soon as MQTT becomes
+     * ready, publish the first online heartbeat immediately. After that,
+     * publish periodically at CLOUD_STATUS_INTERVAL_MS.
+     */
     while (!s_stop_requested) {
-        (void)ulTaskNotifyTake(
-            pdTRUE,
-            pdMS_TO_TICKS(CLOUD_STATUS_INTERVAL_MS)
-        );
+        if (!cloud_transport_is_ready()) {
+            s_status.offline_skips++;
 
-        if (s_stop_requested) {
-            break;
+            device_status_publisher_wait(
+                DEVICE_STATUS_OFFLINE_RETRY_MS
+            );
+
+            continue;
         }
 
         s_status.cycles++;
-
-        /*
-         * Device Status is a live retained state. While offline, publishing
-         * is skipped instead of creating a durable journal record.
-         */
-        if (!cloud_transport_is_ready()) {
-            s_status.offline_skips++;
-            continue;
-        }
 
         char payload[CLOUD_STATUS_PAYLOAD_MAX_LEN];
 
@@ -68,6 +84,10 @@ static void device_status_publisher_task(void *argument)
                 TAG,
                 "Failed encoding Device Status: %s",
                 esp_err_to_name(encode_result)
+            );
+
+            device_status_publisher_wait(
+                DEVICE_STATUS_OFFLINE_RETRY_MS
             );
 
             continue;
@@ -97,6 +117,10 @@ static void device_status_publisher_task(void *argument)
                 esp_err_to_name(publish_result)
             );
 
+            device_status_publisher_wait(
+                DEVICE_STATUS_OFFLINE_RETRY_MS
+            );
+
             continue;
         }
 
@@ -109,6 +133,10 @@ static void device_status_publisher_task(void *argument)
             "Device Status queued: bytes=%u msg_id=%d status=online",
             (unsigned)strlen(payload),
             mqtt_message_id
+        );
+
+        device_status_publisher_wait(
+            CLOUD_STATUS_INTERVAL_MS
         );
     }
 

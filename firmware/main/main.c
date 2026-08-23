@@ -243,7 +243,7 @@ void app_main(void)
         );
     #endif
 
-#if CONFIG_FIRMWARE_WIFI_ENABLED && CONFIG_FIRMWARE_E2E_STORAGE_TEST
+#if CONFIG_FIRMWARE_WIFI_ENABLED && CONFIG_FIRMWARE_WIFI_FAULT_TEST
     /*
      * One-shot connectivity fault injection for the Wokwi E2E test:
      *

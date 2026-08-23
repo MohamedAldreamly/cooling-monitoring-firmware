@@ -531,7 +531,7 @@ CONFIG_PARTITION_TABLE_MD5=y
 #
 # Cooling Monitoring Firmware
 #
-CONFIG_FIRMWARE_E2E_STORAGE_TEST=y
+# CONFIG_FIRMWARE_E2E_STORAGE_TEST is not set
 
 #
 # Wi-Fi Configuration

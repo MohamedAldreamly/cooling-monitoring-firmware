@@ -113,77 +113,308 @@ static void simulation_update_normal(
     }
 }
 
+typedef struct {
+    signal_id_t signal_id;
+    const char *name;
+    uint32_t abnormal_ms;
+    uint32_t recovery_ms;
+} simulation_alarm_step_t;
+
+static const simulation_alarm_step_t s_alarm_steps[] = {
+    { SIGNAL_ID_ROOM_TEMP_01, "ROOM_TEMP_01", 15000U, 10000U },
+    { SIGNAL_ID_ROOM_TEMP_02, "ROOM_TEMP_02", 15000U, 10000U },
+    { SIGNAL_ID_ROOM_TEMP_03, "ROOM_TEMP_03", 15000U, 10000U },
+    { SIGNAL_ID_ROOM_TEMP_04, "ROOM_TEMP_04", 15000U, 10000U },
+    { SIGNAL_ID_AIR_TEMP_01, "AIR_TEMP_01", 15000U, 10000U },
+    { SIGNAL_ID_AIR_RH_01, "AIR_RH_01", 15000U, 10000U },
+    { SIGNAL_ID_DOOR_SAFE, "DOOR_SAFE", 10000U, 5000U },
+    { SIGNAL_ID_DOOR_AUX, "DOOR_AUX", 10000U, 5000U },
+    { SIGNAL_ID_LEAK_ALARM, "LEAK_ALARM", 10000U, 5000U },
+    { SIGNAL_ID_LEAK_CABLE_FAULT, "LEAK_CABLE_FAULT", 10000U, 5000U },
+    { SIGNAL_ID_COMPRESSOR_RUN, "COMPRESSOR_RUN", 10000U, 5000U },
+    { SIGNAL_ID_COMPRESSOR_TRIP, "COMPRESSOR_TRIP", 10000U, 5000U },
+    { SIGNAL_ID_EVAP_FAN_RUN, "EVAP_FAN_RUN", 10000U, 5000U },
+    { SIGNAL_ID_POWER_FAILURE, "POWER_FAILURE", 10000U, 5000U },
+    { SIGNAL_ID_COMPRESSOR_CURRENT, "COMPRESSOR_CURRENT", 15000U, 10000U },
+    { SIGNAL_ID_BATTERY_VOLTAGE, "BATTERY_VOLTAGE", 25000U, 25000U },
+};
+
+static const size_t s_alarm_step_count =
+    sizeof(s_alarm_steps) / sizeof(s_alarm_steps[0]);
+
+static void simulation_reset_alarm_inputs(void)
+{
+    s_process_state.door_safe = false;
+    s_process_state.door_aux = false;
+    s_process_state.leak_alarm = false;
+    s_process_state.leak_cable_fault = false;
+    s_process_state.compressor_run = true;
+    s_process_state.compressor_trip = false;
+    s_process_state.evaporator_fan_run = true;
+    s_process_state.power_failure = false;
+}
+
+static void simulation_apply_alarm_level(
+    signal_id_t signal_id,
+    uint64_t step_ms,
+    uint32_t abnormal_ms
+)
+{
+    const uint32_t third = abnormal_ms / 3U;
+    const uint8_t level =
+        step_ms < third ? 0U :
+        step_ms < (uint64_t)(third * 2U) ? 1U : 2U;
+
+    static const float temperature_values[] = {
+        -11.0f, -7.0f, -3.0f
+    };
+    static const float humidity_values[] = {
+        84.0f, 91.0f, 98.0f
+    };
+    static const float current_values[] = {
+        34.0f, 48.0f, 68.0f
+    };
+    static const float battery_values[] = {
+        23.5f, 22.5f, 20.5f
+    };
+
+    switch (signal_id) {
+        case SIGNAL_ID_ROOM_TEMP_01:
+        case SIGNAL_ID_ROOM_TEMP_02:
+        case SIGNAL_ID_ROOM_TEMP_03:
+        case SIGNAL_ID_ROOM_TEMP_04:
+            s_process_state.room_temperature[
+                signal_id - SIGNAL_ID_ROOM_TEMP_01
+            ] = temperature_values[level];
+            break;
+
+        case SIGNAL_ID_AIR_TEMP_01:
+            s_process_state.air_temperature =
+                temperature_values[level];
+            break;
+
+        case SIGNAL_ID_AIR_RH_01:
+            s_process_state.relative_humidity =
+                humidity_values[level];
+            break;
+
+        case SIGNAL_ID_DOOR_SAFE:
+            s_process_state.door_safe = true;
+            break;
+
+        case SIGNAL_ID_DOOR_AUX:
+            s_process_state.door_aux = true;
+            break;
+
+        case SIGNAL_ID_LEAK_ALARM:
+            s_process_state.leak_alarm = true;
+            break;
+
+        case SIGNAL_ID_LEAK_CABLE_FAULT:
+            s_process_state.leak_cable_fault = true;
+            break;
+
+        case SIGNAL_ID_COMPRESSOR_RUN:
+            s_process_state.compressor_run = false;
+            s_process_state.compressor_current = 0.0f;
+            break;
+
+        case SIGNAL_ID_COMPRESSOR_TRIP:
+            s_process_state.compressor_trip = true;
+            break;
+
+        case SIGNAL_ID_EVAP_FAN_RUN:
+            s_process_state.evaporator_fan_run = false;
+            break;
+
+        case SIGNAL_ID_POWER_FAILURE:
+            s_process_state.power_failure = true;
+            break;
+
+        case SIGNAL_ID_COMPRESSOR_CURRENT:
+            s_process_state.compressor_current =
+                current_values[level];
+            break;
+
+        case SIGNAL_ID_BATTERY_VOLTAGE:
+            s_process_state.battery_voltage =
+                battery_values[level];
+            break;
+
+        default:
+            break;
+    }
+}
+
 static void simulation_update_full_system(
     uint64_t uptime_ms
 )
 {
-    const uint64_t scenario_ms = uptime_ms % 240000ULL;
+    const uint64_t baseline_ms = 5000ULL;
+    const uint64_t all_active_hold_ms = 15000ULL;
+    const uint64_t final_normal_ms = 5000ULL;
 
+    uint64_t cycle_duration_ms =
+        baseline_ms +
+        all_active_hold_ms +
+        final_normal_ms;
+
+    for (size_t index = 0U;
+         index < s_alarm_step_count;
+         index++) {
+        cycle_duration_ms +=
+            s_alarm_steps[index].abnormal_ms +
+            s_alarm_steps[index].recovery_ms;
+    }
+
+    const uint64_t elapsed_ms =
+        uptime_ms - s_scenario_started_ms;
+    const uint64_t cycle_index =
+        elapsed_ms / cycle_duration_ms;
+    const uint64_t cycle_ms =
+        elapsed_ms % cycle_duration_ms;
+
+    simulation_reset_alarm_inputs();
     simulation_update_normal(uptime_ms);
 
+    uint8_t phase = 0U;
+    const char *phase_name = "NORMAL_BASELINE";
+    uint64_t cursor_ms = baseline_ms;
+    bool phase_selected = false;
+
     /*
-     * 0-30 sec: Normal operation
-     * 30-50 sec: Door open
-     * 50-90 sec: Door closed, temperature recovery
-     * 90-120 sec: Compressor trip
-     * 120-160 sec: Normal recovery
-     * 160-190 sec: Water leak
-     * 190-220 sec: Power failure
-     * 220-240 sec: Recovery
+     * Activation stage:
+     *
+     * Previously activated signals remain at their critical value while
+     * the next signal moves through warning, high and critical. This lets
+     * the active-alarm count grow from 1 to SIGNAL_ID_COUNT instead of
+     * closing each alarm before the following one starts.
      */
+    for (size_t index = 0U;
+         index < s_alarm_step_count;
+         index++) {
+        const simulation_alarm_step_t *step =
+            &s_alarm_steps[index];
 
-    if ((scenario_ms >= 30000ULL) &&
-        (scenario_ms < 50000ULL)) {
+        const uint64_t abnormal_end_ms =
+            cursor_ms + step->abnormal_ms;
 
-        s_process_state.door_safe = true;
-        s_process_state.door_aux = true;
+        if (cycle_ms >= cursor_ms &&
+            cycle_ms < abnormal_end_ms) {
+            for (size_t active_index = 0U;
+                 active_index < index;
+                 active_index++) {
+                const simulation_alarm_step_t *active_step =
+                    &s_alarm_steps[active_index];
 
-        const float rise =
-            (float)(scenario_ms - 30000ULL) / 10000.0f;
+                simulation_apply_alarm_level(
+                    active_step->signal_id,
+                    active_step->abnormal_ms - 1U,
+                    active_step->abnormal_ms
+                );
+            }
 
-        for (size_t i = 0; i < 4; i++) {
-            s_process_state.room_temperature[i] += rise;
+            phase = (uint8_t)(1U + index);
+            phase_name = step->name;
+            phase_selected = true;
+
+            simulation_apply_alarm_level(
+                step->signal_id,
+                cycle_ms - cursor_ms,
+                step->abnormal_ms
+            );
+            break;
         }
 
-        s_process_state.air_temperature += rise;
-        s_process_state.relative_humidity += 4.0f;
-    } else {
-        s_process_state.door_safe = false;
-        s_process_state.door_aux = false;
+        cursor_ms = abnormal_end_ms;
     }
 
-    if ((scenario_ms >= 90000ULL) &&
-        (scenario_ms < 120000ULL)) {
+    /* Keep all 16 alarms critical long enough for Telemetry and the
+     * dashboard polling cycle to observe the fully active system. */
+    if (!phase_selected &&
+        cycle_ms >= cursor_ms &&
+        cycle_ms < (cursor_ms + all_active_hold_ms)) {
+        for (size_t active_index = 0U;
+             active_index < s_alarm_step_count;
+             active_index++) {
+            const simulation_alarm_step_t *active_step =
+                &s_alarm_steps[active_index];
 
-        s_process_state.compressor_run = false;
-        s_process_state.compressor_trip = true;
-        s_process_state.compressor_current = 0.0f;
-
-        const float rise =
-            (float)(scenario_ms - 90000ULL) / 15000.0f;
-
-        for (size_t i = 0; i < 4; i++) {
-            s_process_state.room_temperature[i] += rise;
+            simulation_apply_alarm_level(
+                active_step->signal_id,
+                active_step->abnormal_ms - 1U,
+                active_step->abnormal_ms
+            );
         }
-    } else {
-        s_process_state.compressor_run = true;
-        s_process_state.compressor_trip = false;
+
+        phase = (uint8_t)(1U + s_alarm_step_count);
+        phase_name = "ALL_ALARMS_CRITICAL";
+        phase_selected = true;
     }
 
-    s_process_state.leak_alarm =
-        (scenario_ms >= 160000ULL) &&
-        (scenario_ms < 190000ULL);
+    cursor_ms += all_active_hold_ms;
 
-    s_process_state.power_failure =
-        (scenario_ms >= 190000ULL) &&
-        (scenario_ms < 220000ULL);
+    /*
+     * Recovery stage:
+     *
+     * Recover one signal at a time. Signals already processed by this
+     * loop remain normal, while all later signals stay critical. The Alarm
+     * Engine therefore publishes RETURNED and CLOSED progressively until
+     * the active-alarm count reaches zero.
+     */
+    if (!phase_selected) {
+        for (size_t index = 0U;
+             index < s_alarm_step_count;
+             index++) {
+            const simulation_alarm_step_t *step =
+                &s_alarm_steps[index];
+            const uint64_t recovery_end_ms =
+                cursor_ms + step->recovery_ms;
 
-    if (s_process_state.power_failure) {
-        const float discharge =
-            (float)(scenario_ms - 190000ULL) / 30000.0f;
+            if (cycle_ms >= cursor_ms &&
+                cycle_ms < recovery_end_ms) {
+                for (size_t active_index = index + 1U;
+                     active_index < s_alarm_step_count;
+                     active_index++) {
+                    const simulation_alarm_step_t *active_step =
+                        &s_alarm_steps[active_index];
 
-        s_process_state.battery_voltage =
-            26.4f - (2.8f * discharge);
+                    simulation_apply_alarm_level(
+                        active_step->signal_id,
+                        active_step->abnormal_ms - 1U,
+                        active_step->abnormal_ms
+                    );
+                }
+
+                phase = (uint8_t)(
+                    2U + s_alarm_step_count + index
+                );
+                phase_name = step->name;
+                phase_selected = true;
+                break;
+            }
+
+            cursor_ms = recovery_end_ms;
+        }
+    }
+
+    if (!phase_selected && cycle_ms >= cursor_ms) {
+        phase = (uint8_t)(2U + (s_alarm_step_count * 2U));
+        phase_name = "NORMAL_BEFORE_REPEAT";
+    }
+
+    if (phase != s_test_phase) {
+        s_test_phase = phase;
+
+        ESP_LOGI(
+            TAG,
+            "Continuous simulation cycle=%llu phase=%u state=%s cycle_ms=%llu duration_ms=%llu",
+            (unsigned long long)cycle_index,
+            (unsigned)phase,
+            phase_name,
+            (unsigned long long)cycle_ms,
+            (unsigned long long)cycle_duration_ms
+        );
     }
 }
 
@@ -191,67 +422,7 @@ static void simulation_update_storage_pipeline_test(
     uint64_t uptime_ms
 )
 {
-    /*
-     * Repeating E2E storage/cloud test.
-     *
-     * One cycle lasts 25 seconds:
-     *   0-3 s   : normal baseline
-     *   3-18 s  : ROOM_TEMP_01 = -5 C
-     *             (> -12 C for 15 s, exceeding the existing
-     *              10-second alarm activation delay)
-     *   18-25 s : ROOM_TEMP_01 = -18 C
-     *             (< -14 C for 7 s, exceeding the existing
-     *              5-second return delay)
-     *
-     * The cycle repeats forever. This deliberately produces repeated
-     * ALARM ACTIVE / ALARM CLEARED events, which is useful for testing
-     * journal accumulation while the cloud path is unavailable.
-     */
-    const uint64_t elapsed_ms =
-        uptime_ms - s_scenario_started_ms;
-
-    const uint64_t cycle_duration_ms =
-        25000ULL;
-
-    const uint64_t cycle_index =
-        elapsed_ms / cycle_duration_ms;
-
-    const uint64_t cycle_ms =
-        elapsed_ms % cycle_duration_ms;
-
-    simulation_update_normal(uptime_ms);
-
-    uint8_t phase = 0U;
-
-    if (cycle_ms < 3000ULL) {
-        s_process_state.room_temperature[0] = -18.0f;
-        phase = 0U;
-    } else if (cycle_ms < 18000ULL) {
-        s_process_state.room_temperature[0] = -5.0f;
-        phase = 1U;
-    } else {
-        s_process_state.room_temperature[0] = -18.0f;
-        phase = 2U;
-    }
-
-    if (phase != s_test_phase) {
-        s_test_phase = phase;
-
-        const char *phase_name =
-            phase == 0U ? "NORMAL_BASELINE" :
-            phase == 1U ? "HIGH_TEMP_TRIGGER" :
-                          "NORMAL_RECOVERY";
-
-        ESP_LOGI(
-            TAG,
-            "E2E cycle=%llu phase=%s ROOM_TEMP_01=%.1f C cycle_ms=%llu total_elapsed=%llu ms",
-            (unsigned long long)cycle_index,
-            phase_name,
-            (double)s_process_state.room_temperature[0],
-            (unsigned long long)cycle_ms,
-            (unsigned long long)elapsed_ms
-        );
-    }
+    simulation_update_full_system(uptime_ms);
 }
 
 static void simulation_update_process_state(
@@ -483,27 +654,6 @@ static esp_err_t simulation_build_sample(
 
         out->source_fault = true;
         s_status.sensor_faults_generated++;
-    }
-
-    /*
-     * Full-system scenario:
-     * Simulate communication loss for ROOM_TEMP_03
-     * between 130 and 150 seconds.
-     */
-    if (s_status.active_scenario ==
-        SIMULATION_SCENARIO_FULL_SYSTEM) {
-
-        const uint64_t scenario_ms =
-            uptime_ms % 240000ULL;
-
-        if ((scenario_ms >= 130000ULL) &&
-            (scenario_ms < 150000ULL) &&
-            (signal_id == SIGNAL_ID_ROOM_TEMP_03)) {
-
-            out->communication_ok = false;
-            out->crc_ok = false;
-            s_status.communication_faults_generated++;
-        }
     }
 
     return ESP_OK;

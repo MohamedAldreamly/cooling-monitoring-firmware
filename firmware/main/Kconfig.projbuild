@@ -2,12 +2,13 @@ menu "Cooling Monitoring Firmware"
 
 config FIRMWARE_E2E_STORAGE_TEST
     bool "Run Raw-to-SPIFFS end-to-end test on boot"
-    default y
+    default n
     help
         Runs a deterministic Simulation Engine scenario whose raw samples
         traverse Signal Processing, Snapshot Manager, Alarm Engine, Record
         Builder, Record Queue and Storage Writer. Real drivers are not started.
         Disable this option after completing the test.
+
 
 menu "Wi-Fi Configuration"
 
@@ -40,6 +41,14 @@ config FIRMWARE_WIFI_MAXIMUM_RETRY
         Number of failed connection attempts before entering
         the disconnected state. Automatic reconnection remains
         available after initialization.
+
+config FIRMWARE_WIFI_FAULT_TEST
+    bool "Run Wi-Fi offline/recovery test"
+    depends on FIRMWARE_WIFI_ENABLED
+    default y
+    help
+        Keeps the simulation running, forces Wi-Fi offline
+        after 30 seconds, then restores it after 60 seconds.
 
 endmenu
 
