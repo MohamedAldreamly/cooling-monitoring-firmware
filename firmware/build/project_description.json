@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "cooling_monitoring_firmware",
-    "project_version":    "c7232b5-dirty",
+    "project_version":    "ef5c863-dirty",
     "project_path":       "F:/iot-cooling-system/firmware",
     "idf_path":           "C:/Espressif/frameworks/esp-idf-v5.3.1",
     "build_dir":          "F:/iot-cooling-system/firmware/build",

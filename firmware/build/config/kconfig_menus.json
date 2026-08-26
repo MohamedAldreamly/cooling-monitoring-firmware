@@ -6266,6 +6266,16 @@
                                 ],
                                 "title": "Maximum connection retries",
                                 "type": "int"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "FIRMWARE_WIFI_ENABLED",
+                                "help": "Keeps the simulation running, forces Wi-Fi offline\nafter 30 seconds, then restores it after 60 seconds.",
+                                "id": "FIRMWARE_WIFI_FAULT_TEST",
+                                "name": "FIRMWARE_WIFI_FAULT_TEST",
+                                "range": null,
+                                "title": "Run Wi-Fi offline/recovery test",
+                                "type": "bool"
                             }
                         ],
                         "depends_on": null,
